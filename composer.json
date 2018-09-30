@@ -44,8 +44,7 @@
     },
     "scripts": {
         "test": [
-            "phpunit --coverage-text",
-            "phpcs"
+            "phpunit --configuration phpunit.xml.dist"
         ],
         "cs-fix": "php-cs-fixer fix .",
         "coverage": "phpunit --coverage-html=coverage"

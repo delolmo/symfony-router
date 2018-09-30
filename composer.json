@@ -20,12 +20,12 @@
     },
     "autoload": {
         "psr-4": {
-            "\\DelOlmo\\Middleware\\": "src/"
+            "DelOlmo\\Middleware\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "\\DelOlmo\\Middleware\\": "tests/"
+            "DelOlmo\\Middleware\\": "tests/"
         }
     },
     "require": {

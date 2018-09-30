@@ -112,7 +112,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $response = Dispatcher::run([
                 new SymfonyRouterMiddleware($this->router),
-                function($request) {
+                function ($request) {
                     echo $request->getAttribute('_route')['_route'];
                 }
                 ], $request);
@@ -138,12 +138,11 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $response = Dispatcher::run([
                     (new SymfonyRouterMiddleware($this->router))
                     ->setAttribute('_route_test'),
-                function($request) {
+                function ($request) {
                     echo $request->getAttribute('_route_test')['_route'];
                 }
                 ], $request);
 
         $this->assertEquals('test', (string) $response->getBody());
     }
-
 }

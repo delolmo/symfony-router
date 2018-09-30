@@ -18,7 +18,6 @@ use Symfony\Component\Routing\RouterInterface as Router;
  */
 class SymfonyRouterMiddleware implements Middleware
 {
-
     use HasResponseFactory;
 
     /**
@@ -75,5 +74,4 @@ class SymfonyRouterMiddleware implements Middleware
         $this->attribute = $attribute;
         return $this;
     }
-
 }

@@ -37,11 +37,11 @@ $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 
 ## Options
 
-### `__construct(Symfony\Component\Routing\RouterInterface $router)`
+#### `__construct(Symfony\Component\Routing\RouterInterface $router)`
 
 The router instance to use.
 
-### `setAttribute(string $attribute)`
+#### `setAttribute(string $attribute)`
 
 The attribute name used to store the matched route in the server request. The default attribute name is `_route`.
 

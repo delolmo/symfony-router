@@ -29,7 +29,7 @@
         }
     },
     "require": {
-        "php": ">=7",
+        "php": ">=7.1",
         "middlewares/utils": "^2.1",
         "psr/http-server-middleware": "^1.0",
         "symfony/psr-http-message-bridge": "^1.1",
@@ -39,5 +39,13 @@
         "phpunit/phpunit": "^6.0|^7.0",
         "friendsofphp/php-cs-fixer": "^2.0",
         "squizlabs/php_codesniffer": "^3.0"
+    },
+    "scripts": {
+        "test": [
+            "phpunit --coverage-text",
+            "phpcs"
+        ],
+        "cs-fix": "php-cs-fixer fix .",
+        "coverage": "phpunit --coverage-html=coverage"
     }
 }

@@ -1,0 +1,25 @@
+{
+    "name": "delolmo/symfony-router",
+    "description": "PSR-15 middleware to use the symfony/routing component and store the route in a request attribute.",
+    "authors": [
+        {
+            "name": "Antonio del Olmo Garcia",
+            "email": "adelolmog@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "\\DelOlmo\\Middleware\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "\\DelOlmo\\Middleware\\": "test/"
+        }
+    },
+    "require": {
+        "middlewares/utils": "^2.1",
+        "symfony/psr-http-message-bridge": "^1.1",
+        "symfony/routing": "^4.1"
+    }
+}

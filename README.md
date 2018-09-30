@@ -1,10 +1,6 @@
 # delolmo/symfony-router
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE)
-[![Build Status][ico-travis]][link-travis]
-[![Quality Score][ico-scrutinizer]][link-scrutinizer]
-[![Total Downloads][ico-downloads]][link-downloads]
+PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.
 
 ## Requirements
 

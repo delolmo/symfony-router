@@ -1,5 +1,7 @@
 # delolmo/symfony-router
 
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.
 
 ## Requirements

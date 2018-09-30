@@ -17,7 +17,7 @@
     "homepage": "https://github.com/delolmo/symfony-router",
     "support": {
         "issues": "https://github.com/delolmo/symfony-router/issues"
-},
+    },
     "autoload": {
         "psr-4": {
             "\\DelOlmo\\Middleware\\": "src/"

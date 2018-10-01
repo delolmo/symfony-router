@@ -43,10 +43,6 @@ $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 
 The router instance to use.
 
-#### `setAttribute(string $attribute)`
-
-The attribute name used to store the matched route in the server request. The default attribute name is `_route`.
-
 #### `responseFactory(Psr\Http\Message\ResponseFactoryInterface $responseFactory)`
 
 A PSR-17 factory to create the error responses (`404` or `405`).

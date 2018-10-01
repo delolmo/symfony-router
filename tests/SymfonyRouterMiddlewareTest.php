@@ -113,33 +113,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $response = Dispatcher::run([
                 new SymfonyRouterMiddleware($this->router),
                 function ($request) {
-                    echo $request->getAttribute('_route')['_route'];
-                }
-                ], $request);
-
-        $this->assertEquals('test', (string) $response->getBody());
-    }
-
-    /**
-     *
-     */
-    public function testCustomAttribute()
-    {
-        $request = Factory::createServerRequest('GET', '/users');
-
-        $factory        = new HttpFoundationFactory();
-        $symfonyRequest = $factory->createRequest($request);
-        $context        = (new RequestContext())->fromRequest($symfonyRequest);
-        $matcher        = new UrlMatcher($this->routes, $context);
-        $p              = new \ReflectionProperty($this->router, 'matcher');
-        $p->setAccessible(true);
-        $p->setValue($this->router, $matcher);
-
-        $response = Dispatcher::run([
-                    (new SymfonyRouterMiddleware($this->router))
-                    ->setAttribute('_route_test'),
-                function ($request) {
-                    echo $request->getAttribute('_route_test')['_route'];
+                    echo $request->getAttribute('_route');
                 }
                 ], $request);
 

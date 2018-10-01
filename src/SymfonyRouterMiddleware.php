@@ -21,11 +21,6 @@ class SymfonyRouterMiddleware implements Middleware
     use HasResponseFactory;
 
     /**
-     * @var string
-     */
-    private $attribute = '_route';
-
-    /**
      * @var Symfony\Component\Routing\RouterInterface
      */
     private $router;
@@ -58,20 +53,10 @@ class SymfonyRouterMiddleware implements Middleware
             return $this->createResponse(500);
         }
 
-        $request = $request->withAttribute($this->attribute, $route);
+        foreach ($route as $key => $value) {
+            $request = $request->withAttribute($key, $value);
+        }
 
         return $handler->handle($request);
-    }
-
-    /**
-     * Set the attribute name to store the route reference.
-     *
-     * @param string $attribute
-     * @return \self
-     */
-    public function setAttribute(string $attribute): self
-    {
-        $this->attribute = $attribute;
-        return $this;
     }
 }

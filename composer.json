@@ -11,7 +11,6 @@
         "server",
         "router",
         "symfony",
-        "symfony/routing",
         "symfony-routing"
     ],
     "homepage": "https://github.com/delolmo/symfony-router",

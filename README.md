@@ -1,6 +1,8 @@
 # delolmo/symfony-router
 
+ [![Packagist Version](https://img.shields.io/packagist/v/delolmo/symfony-router.svg?style=flat-square)](https://packagist.org/packages/delolmo/symfony-router)
  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+ [![Build Status](https://travis-ci.org/delolmo/symfony-router.svg)](https://travis-ci.org/delolmo/symfony-router)
 
 PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.
 

@@ -82,7 +82,7 @@ $c->get('emitter')->emit($response);
 // Try matching a /blog/hello-world request
 $response = $dispatcher->dispatch(new ServerRequest([], [], '/blog/hello-world'));
 
-// Will return {"_route": "blog_list", "request-handler" => ["App\Controller\BlogController", "list"], "slug" => "hello-world"}
+// Will return {"_route": "blog_show", "request-handler" => ["App\Controller\BlogController", "show"], "slug" => "hello-world"}
 $c->get('emitter')->emit($response);
 
 ```

@@ -41,6 +41,7 @@ class SymfonyRouterMiddleware implements Middleware
         try {
             $symfonyRequest = (new HttpFoundationFactory())
                 ->createRequest($request);
+            $this->router->getContext()->fromRequest($symfonyRequest);
             $route = $this->router
                 ->matchRequest($symfonyRequest);
         } catch (ResourceNotFoundException $e) {

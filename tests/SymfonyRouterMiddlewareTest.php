@@ -9,6 +9,7 @@ use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -44,7 +45,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
      */
     protected function setUp()
     {
-        $this->loader = $this->getMockBuilder('Symfony\Component\Config\Loader\LoaderInterface')->getMock();
+        $this->loader = $this->getMockBuilder(LoaderInterface::class)->getMock();
         $this->router = new Router($this->loader, 'routing.yml');
 
         $this->routes = new RouteCollection();

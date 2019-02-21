@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface as Handler;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Component\Routing\RouterInterface as Router;
+use Symfony\Component\Routing\Router;
 
 /**
  * @author Antonio del Olmo García <adelolmog@gmail.com>
@@ -21,12 +21,12 @@ class SymfonyRouterMiddleware implements Middleware
     use HasResponseFactory;
 
     /**
-     * @var Symfony\Component\Routing\RouterInterface
+     * @var \Symfony\Component\Routing\Router
      */
     private $router;
 
     /**
-     * @param Symfony\Component\Routing\RouterInterface $router
+     * @param \Symfony\Component\Routing\Router $router
      */
     public function __construct(Router $router)
     {

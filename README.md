@@ -3,6 +3,8 @@
  [![Packagist Version](https://img.shields.io/packagist/v/delolmo/symfony-router.svg?style=flat-square)](https://packagist.org/packages/delolmo/symfony-router)
  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
  [![Build Status](https://travis-ci.org/delolmo/symfony-router.svg)](https://travis-ci.org/delolmo/symfony-router)
+ [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/delolmo/symfony-router/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/delolmo/symfony-router/?branch=master)
+ [![Code Coverage](https://scrutinizer-ci.com/g/delolmo/symfony-router/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/delolmo/symfony-router/?branch=master)
 
 PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.
 

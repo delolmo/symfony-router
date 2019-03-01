@@ -1,3 +1,5 @@
-nbproject
-vendor
-.php_cs.cache
+/nbproject
+/vendor/
+/.php_cs.cache
+/clover.xml
+/composer.lock

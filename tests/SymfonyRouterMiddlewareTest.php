@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace DelOlmo\Middleware;
 
@@ -10,7 +10,9 @@ use Middlewares\Utils\Factory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
@@ -59,12 +61,19 @@ class SymfonyRouterMiddlewareTest extends TestCase
     {
         $request = Factory::createServerRequest('GET', '/posts');
 
-        $factory        = new HttpFoundationFactory();
+        $factory = new HttpFoundationFactory();
+
         $symfonyRequest = $factory->createRequest($request);
-        $context        = (new RequestContext())->fromRequest($symfonyRequest);
-        $matcher        = new UrlMatcher($this->routes, $context);
-        $p              = new \ReflectionProperty($this->router, 'matcher');
+
+        $context = (new RequestContext())
+            ->fromRequest($symfonyRequest);
+
+        $matcher = new UrlMatcher($this->routes, $context);
+
+        $p = new \ReflectionProperty($this->router, 'matcher');
+
         $p->setAccessible(true);
+
         $p->setValue($this->router, $matcher);
 
         $response = Dispatcher::run([
@@ -81,12 +90,19 @@ class SymfonyRouterMiddlewareTest extends TestCase
     {
         $request = Factory::createServerRequest('POST', '/users');
 
-        $factory        = new HttpFoundationFactory();
+        $factory = new HttpFoundationFactory();
+
         $symfonyRequest = $factory->createRequest($request);
-        $context        = (new RequestContext())->fromRequest($symfonyRequest);
-        $matcher        = new UrlMatcher($this->routes, $context);
-        $p              = new \ReflectionProperty($this->router, 'matcher');
+
+        $context = (new RequestContext())
+            ->fromRequest($symfonyRequest);
+
+        $matcher = new UrlMatcher($this->routes, $context);
+
+        $p = new \ReflectionProperty($this->router, 'matcher');
+
         $p->setAccessible(true);
+
         $p->setValue($this->router, $matcher);
 
         $response = Dispatcher::run([
@@ -94,6 +110,31 @@ class SymfonyRouterMiddlewareTest extends TestCase
                 ], $request);
 
         $this->assertEquals(405, $response->getStatusCode());
+    }
+
+    /**
+     *
+     */
+    public function testNoConfigurationException()
+    {
+        $request = Factory::createServerRequest('POST', '/users');
+
+        $matcher = $this->createMock(RequestMatcherInterface::class);
+
+        $matcher->method("matchRequest")
+            ->will($this->throwException(new NoConfigurationException()));
+
+        $p = new \ReflectionProperty($this->router, "matcher");
+
+        $p->setAccessible(true);
+
+        $p->setValue($this->router, $matcher);
+
+        $response = Dispatcher::run([
+                new SymfonyRouterMiddleware($this->router)
+                ], $request);
+
+        $this->assertEquals(500, $response->getStatusCode());
     }
 
     /**

@@ -10,8 +10,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface as Middleware;
 use Psr\Http\Server\RequestHandlerInterface as Handler;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\NoConfigurationException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
 
 /**
@@ -45,14 +46,14 @@ class SymfonyRouterMiddleware implements Middleware
             $this->router->getContext()->fromRequest($symfonyRequest);
             $route = $this->router
                 ->matchRequest($symfonyRequest);
-        } catch (ResourceNotFoundException $e) {
-            return $this->createResponse(404);
         } catch (MethodNotAllowedException $e) {
             $allows = implode(', ', $e->getAllowedMethods());
-            return $this->createResponse(405)
+            return $this->createResponse(405, $e->getMessage())
                     ->withHeader('Allow', $allows);
-        } catch (\Exception $e) {
-            return $this->createResponse(500);
+        } catch (NoConfigurationException $e) {
+            return $this->createResponse(500, $e->getMessage());
+        } catch (ResourceNotFoundException $e) {
+            return $this->createResponse(404, $e->getMessage());
         }
 
         foreach ($route as $key => $value) {

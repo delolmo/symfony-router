@@ -144,12 +144,19 @@ class SymfonyRouterMiddlewareTest extends TestCase
     {
         $request = Factory::createServerRequest('GET', '/users');
 
-        $factory        = new HttpFoundationFactory();
+        $factory = new HttpFoundationFactory();
+
         $symfonyRequest = $factory->createRequest($request);
-        $context        = (new RequestContext())->fromRequest($symfonyRequest);
-        $matcher        = new UrlMatcher($this->routes, $context);
-        $p              = new \ReflectionProperty($this->router, 'matcher');
+
+        $context = (new RequestContext())
+            ->fromRequest($symfonyRequest);
+
+        $matcher = new UrlMatcher($this->routes, $context);
+
+        $p = new \ReflectionProperty($this->router, 'matcher');
+
         $p->setAccessible(true);
+
         $p->setValue($this->router, $matcher);
 
         $response = Dispatcher::run([

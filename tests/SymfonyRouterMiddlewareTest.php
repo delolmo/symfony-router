@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace DelOlmo\Middleware;
 
@@ -43,7 +43,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
     private $loader = null;
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     protected function setUp()
     {
@@ -55,7 +55,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
     }
 
     /**
-     *
+     * @return void
      */
     public function testResourceNotFoundException()
     {
@@ -80,11 +80,11 @@ class SymfonyRouterMiddlewareTest extends TestCase
                 new SymfonyRouterMiddleware($this->router)
                 ], $request);
 
-        $this->assertEquals(404, $response->getStatusCode());
+        self::assertEquals(404, $response->getStatusCode());
     }
 
     /**
-     *
+     * @return void
      */
     public function testMethodNotAllowedException()
     {
@@ -109,11 +109,11 @@ class SymfonyRouterMiddlewareTest extends TestCase
                 new SymfonyRouterMiddleware($this->router)
                 ], $request);
 
-        $this->assertEquals(405, $response->getStatusCode());
+        self::assertEquals(405, $response->getStatusCode());
     }
 
     /**
-     *
+     * @return void
      */
     public function testNoConfigurationException()
     {
@@ -122,7 +122,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $matcher = $this->createMock(RequestMatcherInterface::class);
 
         $matcher->method("matchRequest")
-            ->will($this->throwException(new NoConfigurationException()));
+            ->will(self::throwException(new NoConfigurationException()));
 
         $p = new \ReflectionProperty($this->router, "matcher");
 
@@ -134,11 +134,11 @@ class SymfonyRouterMiddlewareTest extends TestCase
                 new SymfonyRouterMiddleware($this->router)
                 ], $request);
 
-        $this->assertEquals(500, $response->getStatusCode());
+        self::assertEquals(500, $response->getStatusCode());
     }
 
     /**
-     *
+     * @return void
      */
     public function testRouteMatched()
     {
@@ -166,6 +166,6 @@ class SymfonyRouterMiddlewareTest extends TestCase
                 }
                 ], $request);
 
-        $this->assertEquals('test', (string) $response->getBody());
+        self::assertEquals('test', (string) $response->getBody());
     }
 }

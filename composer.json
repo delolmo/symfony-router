@@ -23,6 +23,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",
+        "phpmd/phpmd": "^2.6",
         "phpstan/phpstan": "^0.11",
         "phpstan/phpstan-deprecation-rules": "^0.11",
         "phpstan/phpstan-mockery": "^0.11",
@@ -47,11 +48,13 @@
         "coverage": "phpunit --coverage-html=coverage",
         "phpcbf": "phpcbf",
         "phpcs": "phpcs",
+        "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode",
         "phpstan": "phpstan analyse",
         "phpunit": "phpunit --configuration phpunit.xml.dist",
         "test": [
             "@phpunit",
             "@phpcs",
+            "@phpmd",
             "@phpstan"
         ]
     },

@@ -91,7 +91,7 @@ $c->get('emitter')->emit($response);
 
 ## Options
 
-#### `__construct(Symfony\Component\Routing\RouterInterface $router)`
+#### `__construct(Symfony\Component\Routing\Router $router)`
 
 The router instance to use.
 

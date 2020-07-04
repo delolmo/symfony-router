@@ -54,11 +54,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $response = Dispatcher::run([$middleware], $request);
 
-        self::assertEquals(404, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function testMethodNotAllowedException() : void
@@ -80,11 +82,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $response = Dispatcher::run([$middleware], $request);
 
-        self::assertEquals(405, $response->getStatusCode());
+        self::assertSame(405, $response->getStatusCode());
     }
 
     public function testNoConfigurationException() : void
@@ -102,11 +106,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $response = Dispatcher::run([$middleware], $request);
 
-        self::assertEquals(500, $response->getStatusCode());
+        self::assertSame(500, $response->getStatusCode());
     }
 
     public function testRouteMatched() : void
@@ -128,7 +134,9 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $dummyFn = static function ($request) : void {
             echo $request->getAttribute('_route');
@@ -136,6 +144,6 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $response = Dispatcher::run([$middleware, $dummyFn], $request);
 
-        self::assertEquals('test', (string) $response->getBody());
+        self::assertSame('test', (string) $response->getBody());
     }
 }

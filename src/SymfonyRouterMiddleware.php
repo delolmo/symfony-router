@@ -14,31 +14,20 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
+use function implode;
 
-/**
- * @author Antonio del Olmo García <adelolmog@gmail.com>
- */
 class SymfonyRouterMiddleware implements Middleware
 {
     use HasResponseFactory;
 
-    /**
-     * @var \Symfony\Component\Routing\Router
-     */
-    private $router;
+    private Router $router;
 
-    /**
-     * @param \Symfony\Component\Routing\Router $router
-     */
     public function __construct(Router $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * Process a request and return a response.
-     */
-    public function process(Request $request, Handler $handler): Response
+    public function process(Request $request, Handler $handler) : Response
     {
         try {
             $symfonyRequest = (new HttpFoundationFactory())
@@ -48,6 +37,7 @@ class SymfonyRouterMiddleware implements Middleware
                 ->matchRequest($symfonyRequest);
         } catch (MethodNotAllowedException $e) {
             $allows = implode(', ', $e->getAllowedMethods());
+
             return $this->createResponse(405, $e->getMessage())
                     ->withHeader('Allow', $allows);
         } catch (NoConfigurationException $e) {

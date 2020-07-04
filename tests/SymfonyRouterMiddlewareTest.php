@@ -4,45 +4,29 @@ declare(strict_types=1);
 
 namespace DelOlmo\Middleware;
 
-use DelOlmo\Middleware\SymfonyRouterMiddleware;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Routing\Exception\NoConfigurationException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Router;
 
-/**
- * @author Antonio del Olmo García <adelolmog@gmail.com>
- */
 class SymfonyRouterMiddlewareTest extends TestCase
 {
+    private RouteCollection $routes;
 
-    /**
-     * @var \Symfony\Component\Routing\RouteCollection
-     */
-    private $routes = null;
+    private Router $router;
 
-    /**
-     * @var \Symfony\Component\Routing\Router
-     */
-    private $router = null;
+    private LoaderInterface $loader;
 
-    /**
-     * @var \Symfony\Component\Config\Loader\LoaderInterface
-     */
-    private $loader = null;
-
-    /**
-     * @return void
-     */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->loader = $this->getMockBuilder(LoaderInterface::class)->getMock();
         $this->router = new Router($this->loader, 'routing.yml');
@@ -51,10 +35,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $this->routes->add('test', new Route('/users', [], [], [], '', [], ['GET']));
     }
 
-    /**
-     * @return void
-     */
-    public function testResourceNotFoundException()
+    public function testResourceNotFoundException() : void
     {
         $request = Factory::createServerRequest('GET', '/posts');
 
@@ -67,23 +48,20 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $matcher = new UrlMatcher($this->routes, $context);
 
-        $p = new \ReflectionProperty($this->router, 'matcher');
+        $p = new ReflectionProperty($this->router, 'matcher');
 
         $p->setAccessible(true);
 
         $p->setValue($this->router, $matcher);
 
-        $response = Dispatcher::run([
-                new SymfonyRouterMiddleware($this->router)
-                ], $request);
+        $middleware = new SymfonyRouterMiddleware($this->router);
+
+        $response = Dispatcher::run([$middleware], $request);
 
         self::assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @return void
-     */
-    public function testMethodNotAllowedException()
+    public function testMethodNotAllowedException() : void
     {
         $request = Factory::createServerRequest('POST', '/users');
 
@@ -96,48 +74,42 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $matcher = new UrlMatcher($this->routes, $context);
 
-        $p = new \ReflectionProperty($this->router, 'matcher');
+        $p = new ReflectionProperty($this->router, 'matcher');
 
         $p->setAccessible(true);
 
         $p->setValue($this->router, $matcher);
 
-        $response = Dispatcher::run([
-                new SymfonyRouterMiddleware($this->router)
-                ], $request);
+        $middleware = new SymfonyRouterMiddleware($this->router);
+
+        $response = Dispatcher::run([$middleware], $request);
 
         self::assertEquals(405, $response->getStatusCode());
     }
 
-    /**
-     * @return void
-     */
-    public function testNoConfigurationException()
+    public function testNoConfigurationException() : void
     {
         $request = Factory::createServerRequest('POST', '/users');
 
         $matcher = $this->createMock(RequestMatcherInterface::class);
 
-        $matcher->method("matchRequest")
+        $matcher->method('matchRequest')
             ->will(self::throwException(new NoConfigurationException()));
 
-        $p = new \ReflectionProperty($this->router, "matcher");
+        $p = new ReflectionProperty($this->router, 'matcher');
 
         $p->setAccessible(true);
 
         $p->setValue($this->router, $matcher);
 
-        $response = Dispatcher::run([
-                new SymfonyRouterMiddleware($this->router)
-                ], $request);
+        $middleware = new SymfonyRouterMiddleware($this->router);
+
+        $response = Dispatcher::run([$middleware], $request);
 
         self::assertEquals(500, $response->getStatusCode());
     }
 
-    /**
-     * @return void
-     */
-    public function testRouteMatched()
+    public function testRouteMatched() : void
     {
         $request = Factory::createServerRequest('GET', '/users');
 
@@ -150,18 +122,19 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $matcher = new UrlMatcher($this->routes, $context);
 
-        $p = new \ReflectionProperty($this->router, 'matcher');
+        $p = new ReflectionProperty($this->router, 'matcher');
 
         $p->setAccessible(true);
 
         $p->setValue($this->router, $matcher);
 
-        $response = Dispatcher::run([
-                new SymfonyRouterMiddleware($this->router),
-                function ($request) {
-                    echo $request->getAttribute('_route');
-                }
-                ], $request);
+        $middleware = new SymfonyRouterMiddleware($this->router);
+
+        $dummyFn = static function ($request) : void {
+            echo $request->getAttribute('_route');
+        };
+
+        $response = Dispatcher::run([$middleware, $dummyFn], $request);
 
         self::assertEquals('test', (string) $response->getBody());
     }

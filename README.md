@@ -52,6 +52,7 @@ This example uses a basic anonymous function to print the route's attributes:
 ```php
 
 use Middlewares\Utils\Dispatcher;
+use Middlewares\Utils\Factory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Routing\RequestContext;
@@ -68,8 +69,10 @@ $router = new Router(
     new RequestContext('/')
 );
 
+$factory = Factory::getRequestFactory();
+
 $dispatcher = new Dispatcher([
-    new DelOlmo\Middleware\SymfonyRouterMiddleware($router),
+    new DelOlmo\Middleware\SymfonyRouterMiddleware($router, $factory),
     function($request, $next) {
         return new HtmlResponse(json_encode($request->getAttributes()));
     }
@@ -91,10 +94,13 @@ $c->get('emitter')->emit($response);
 
 ## Options
 
-#### `__construct(Symfony\Component\Routing\RouterInterface $router)`
+The constructor takes two arguments:
 
-The router instance to use.
+```php
+__construct(
+    \Symfony\Component\Routing\Router $router,
+    \Psr\Http\Message\ResponseFactoryInterface $responseFactory
+)
+```
 
-#### `responseFactory(Psr\Http\Message\ResponseFactoryInterface $responseFactory)`
-
-A PSR-17 factory to create the error responses (`404` or `405`).
+The router instance to use and a PSR-17 factory to create the error responses (`404` or `405`).

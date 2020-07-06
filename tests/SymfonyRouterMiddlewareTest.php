@@ -35,6 +35,40 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $this->routes->add('test', new Route('/users', [], [], [], '', [], ['GET']));
     }
 
+    public function testRequestContextBeingUpdated() : void
+    {
+        $context = $this->createMock(RequestContext::class);
+
+        $router = $this->createMock(Router::class);
+
+        $router
+            ->expects($this->once())
+            ->method('getContext')
+            ->willReturn($context);
+
+        $request = Factory::createServerRequest('GET', '/posts');
+
+        $symfonyRequest = (new HttpFoundationFactory())
+            ->createRequest($request);
+
+        $context
+            ->expects($this->once())
+            ->method('fromRequest')
+            ->with($symfonyRequest);
+
+        $router
+            ->expects($this->once())
+            ->method('matchRequest')
+            ->with($symfonyRequest)
+            ->willReturn([]);
+
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($router, $factory);
+
+        Dispatcher::run([$middleware], $request);
+    }
+
     public function testResourceNotFoundException() : void
     {
         $request = Factory::createServerRequest('GET', '/posts');

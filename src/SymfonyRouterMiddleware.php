@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DelOlmo\Middleware;
 
+use Middlewares\Utils\Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -24,11 +25,12 @@ class SymfonyRouterMiddleware implements Middleware
 
     public function __construct(
         Router $router,
-        ResponseFactoryInterface $responseFactory
+        ?ResponseFactoryInterface $responseFactory = null
     ) {
         $this->router = $router;
 
-        $this->responseFactory = $responseFactory;
+        $this->responseFactory = $responseFactory ??
+            $this->getDefaultResponseFactory();
     }
 
     public function process(Request $request, Handler $handler) : Response
@@ -62,5 +64,10 @@ class SymfonyRouterMiddleware implements Middleware
         }
 
         return $handler->handle($request);
+    }
+
+    private function getDefaultResponseFactory() : ResponseFactoryInterface
+    {
+        return Factory::getResponseFactory();
     }
 }

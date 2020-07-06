@@ -16,6 +16,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.4",
+        "middlewares/utils": "^3.1",
         "psr/http-server-middleware": "^1.0",
         "symfony/psr-http-message-bridge": "^1.1",
         "symfony/routing": "^5.0"
@@ -24,7 +25,6 @@
         "doctrine/coding-standard": "^7.0",
         "infection/infection": "^0.15",
         "laminas/laminas-diactoros": "^2.3",
-        "middlewares/utils": "^2.1",
         "phpmd/phpmd": "^2.6",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpstan/phpstan": "^0.12",
@@ -54,7 +54,6 @@
         "lint": "parallel-lint ./src",
         "phpcbf": "phpcbf",
         "phpcs": "phpcs",
-        "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode",
         "phpstan": "phpstan analyse",
         "phpunit": "phpunit --configuration phpunit.xml.dist",
         "psalm": "psalm",
@@ -62,7 +61,6 @@
             "@lint",
             "@phpunit",
             "@phpcs",
-            "@phpmd",
             "@phpstan",
             "@psalm"
         ]

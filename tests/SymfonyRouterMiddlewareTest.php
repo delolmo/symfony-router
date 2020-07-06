@@ -103,9 +103,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
             ->with($symfonyRequest)
             ->willReturn([]);
 
-        $factory = Factory::getResponseFactory();
-
-        $middleware = new SymfonyRouterMiddleware($router, $factory);
+        $middleware = new SymfonyRouterMiddleware($router);
 
         Dispatcher::run([$middleware], $request);
     }
@@ -129,9 +127,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $factory = Factory::getResponseFactory();
-
-        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
+        $middleware = new SymfonyRouterMiddleware($this->router);
 
         $response = Dispatcher::run([$middleware], $request);
 
@@ -157,9 +153,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $factory = Factory::getResponseFactory();
-
-        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
+        $middleware = new SymfonyRouterMiddleware($this->router);
 
         $response = Dispatcher::run([$middleware], $request);
 
@@ -181,9 +175,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $factory = Factory::getResponseFactory();
-
-        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
+        $middleware = new SymfonyRouterMiddleware($this->router);
 
         $response = Dispatcher::run([$middleware], $request);
 
@@ -209,9 +201,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $factory = Factory::getResponseFactory();
-
-        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
+        $middleware = new SymfonyRouterMiddleware($this->router);
 
         $dummyFn = static function ($request) : void {
             echo $request->getAttribute('_route');

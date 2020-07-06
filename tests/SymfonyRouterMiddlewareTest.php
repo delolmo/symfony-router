@@ -42,7 +42,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $router = $this->createMock(Router::class);
 
         $router
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getContext')
             ->willReturn($context);
 
@@ -52,12 +52,12 @@ class SymfonyRouterMiddlewareTest extends TestCase
             ->createRequest($request);
 
         $context
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('fromRequest')
             ->with($symfonyRequest);
 
         $router
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('matchRequest')
             ->with($symfonyRequest)
             ->willReturn([]);

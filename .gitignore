@@ -1,5 +1,6 @@
-/nbproject
-/vendor/
+/coverage
+/vendor
 /.php_cs.cache
+/.phpunit.result.cache
 /clover.xml
-/composer.lock
+/infection.log

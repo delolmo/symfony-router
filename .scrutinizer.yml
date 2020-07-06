@@ -1,6 +1,10 @@
 before_commands:
     - "composer install --no-dev --prefer-source"
 
+build:
+    environment:
+        php: 7.4.7
+
 tools:
     external_code_coverage:
         timeout: 1200
@@ -9,7 +13,7 @@ tools:
     php_code_sniffer:
         enabled: true
         config:
-            standard: PSR2
+            standard: Doctrine
         filter:
             paths: ["src/*", "tests/*"]
     php_cpd:

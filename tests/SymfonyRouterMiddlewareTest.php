@@ -35,6 +35,40 @@ class SymfonyRouterMiddlewareTest extends TestCase
         $this->routes->add('test', new Route('/users', [], [], [], '', [], ['GET']));
     }
 
+    public function testRequestContextBeingUpdated() : void
+    {
+        $context = $this->createMock(RequestContext::class);
+
+        $router = $this->createMock(Router::class);
+
+        $router
+            ->expects(self::once())
+            ->method('getContext')
+            ->willReturn($context);
+
+        $request = Factory::createServerRequest('GET', '/posts');
+
+        $symfonyRequest = (new HttpFoundationFactory())
+            ->createRequest($request);
+
+        $context
+            ->expects(self::once())
+            ->method('fromRequest')
+            ->with($symfonyRequest);
+
+        $router
+            ->expects(self::once())
+            ->method('matchRequest')
+            ->with($symfonyRequest)
+            ->willReturn([]);
+
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($router, $factory);
+
+        Dispatcher::run([$middleware], $request);
+    }
+
     public function testResourceNotFoundException() : void
     {
         $request = Factory::createServerRequest('GET', '/posts');
@@ -54,11 +88,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $response = Dispatcher::run([$middleware], $request);
 
-        self::assertEquals(404, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function testMethodNotAllowedException() : void
@@ -80,11 +116,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $response = Dispatcher::run([$middleware], $request);
 
-        self::assertEquals(405, $response->getStatusCode());
+        self::assertSame(405, $response->getStatusCode());
     }
 
     public function testNoConfigurationException() : void
@@ -102,11 +140,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $response = Dispatcher::run([$middleware], $request);
 
-        self::assertEquals(500, $response->getStatusCode());
+        self::assertSame(500, $response->getStatusCode());
     }
 
     public function testRouteMatched() : void
@@ -128,7 +168,9 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $p->setValue($this->router, $matcher);
 
-        $middleware = new SymfonyRouterMiddleware($this->router);
+        $factory = Factory::getResponseFactory();
+
+        $middleware = new SymfonyRouterMiddleware($this->router, $factory);
 
         $dummyFn = static function ($request) : void {
             echo $request->getAttribute('_route');
@@ -136,6 +178,6 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $response = Dispatcher::run([$middleware, $dummyFn], $request);
 
-        self::assertEquals('test', (string) $response->getBody());
+        self::assertSame('test', (string) $response->getBody());
     }
 }

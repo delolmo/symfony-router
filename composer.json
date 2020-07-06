@@ -16,24 +16,27 @@
     "license": "MIT",
     "require": {
         "php": "^7.4",
-        "middlewares/utils": "^2.1",
         "psr/http-server-middleware": "^1.0",
         "symfony/psr-http-message-bridge": "^1.1",
         "symfony/routing": "^5.0"
     },
     "require-dev": {
         "doctrine/coding-standard": "^7.0",
+        "infection/infection": "^0.15",
+        "laminas/laminas-diactoros": "^2.3",
+        "middlewares/utils": "^2.1",
         "phpmd/phpmd": "^2.6",
+        "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-deprecation-rules": "^0.12",
         "phpstan/phpstan-doctrine": "^0.12",
         "phpstan/phpstan-mockery": "^0.12",
         "phpstan/phpstan-phpunit": "^0.12",
         "phpstan/phpstan-strict-rules": "^0.12",
-        "phpunit/phpunit": "^7.5",
+        "phpunit/phpunit": "^9.0",
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/config": "^5.0",
-        "zendframework/zend-diactoros": "^2.0"
+        "vimeo/psalm": "^3.11"
     },
     "autoload": {
         "psr-4": {
@@ -47,16 +50,21 @@
     },
     "scripts": {
         "coverage": "phpunit --coverage-html=coverage",
+        "infection": "infection --threads=4 --only-covered",
+        "lint": "parallel-lint ./src",
         "phpcbf": "phpcbf",
         "phpcs": "phpcs",
         "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode",
         "phpstan": "phpstan analyse",
         "phpunit": "phpunit --configuration phpunit.xml.dist",
+        "psalm": "psalm",
         "test": [
+            "@lint",
             "@phpunit",
             "@phpcs",
             "@phpmd",
-            "@phpstan"
+            "@phpstan",
+            "@psalm"
         ]
     },
     "support": {

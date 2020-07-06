@@ -3,17 +3,15 @@
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="vendor/autoload.php"
-         failOnRisky="true"
-         failOnWarning="true">
+         bootstrap="vendor/autoload.php">
     <testsuites>
-        <testsuite name="symfony/routing test suite">
+        <testsuite name="delolmo/symfony-router">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="true">
+        <whitelist processUncoveredFilesFromWhitelist="true">
             <directory>./src</directory>
             <exclude>
                 <directory>./tests</directory>

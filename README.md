@@ -10,7 +10,7 @@ PSR-15 middleware to use the symfony/routing component and store the route attri
 
 ## Requirements
 
-* PHP ^7.4
+* PHP ^8.1
 * A [PSR-7 http library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations)
 * A [PSR-15 middleware dispatcher](https://github.com/middlewares/awesome-psr15-middlewares#dispatcher)
 
@@ -51,14 +51,14 @@ This example uses a basic anonymous function to print the route's attributes:
 
 ```php
 
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\ServerRequest;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Router;
-use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\ServerRequest;
 
 $fileLocator = new FileLocator(array(__DIR__));
 

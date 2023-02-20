@@ -15,25 +15,22 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
+
 use function implode;
 
 class SymfonyRouterMiddleware implements Middleware
 {
     private ResponseFactoryInterface $responseFactory;
 
-    private Router $router;
-
     public function __construct(
-        Router $router,
-        ?ResponseFactoryInterface $responseFactory = null
+        private Router $router,
+        ResponseFactoryInterface|null $responseFactory = null,
     ) {
-        $this->router = $router;
-
         $this->responseFactory = $responseFactory ??
             $this->getDefaultResponseFactory();
     }
 
-    public function process(Request $request, Handler $handler) : Response
+    public function process(Request $request, Handler $handler): Response
     {
         try {
             $symfonyRequest = (new HttpFoundationFactory())
@@ -66,7 +63,7 @@ class SymfonyRouterMiddleware implements Middleware
         return $handler->handle($request);
     }
 
-    private function getDefaultResponseFactory() : ResponseFactoryInterface
+    private function getDefaultResponseFactory(): ResponseFactoryInterface
     {
         return Factory::getResponseFactory();
     }

@@ -15,28 +15,28 @@
     "homepage": "https://github.com/delolmo/symfony-router",
     "license": "MIT",
     "require": {
-        "php": "^7.4",
-        "middlewares/utils": "^3.1",
+        "php": ">=8.1",
+        "middlewares/utils": "^3.3",
         "psr/http-server-middleware": "^1.0",
-        "symfony/psr-http-message-bridge": "^1.1",
-        "symfony/routing": "^5.0"
+        "symfony/psr-http-message-bridge": "^2.0",
+        "symfony/routing": "^6.0"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^7.0",
-        "infection/infection": "^0.15",
-        "laminas/laminas-diactoros": "^2.3",
-        "phpmd/phpmd": "^2.6",
-        "php-parallel-lint/php-parallel-lint": "^1.2",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-deprecation-rules": "^0.12",
-        "phpstan/phpstan-doctrine": "^0.12",
-        "phpstan/phpstan-mockery": "^0.12",
-        "phpstan/phpstan-phpunit": "^0.12",
-        "phpstan/phpstan-strict-rules": "^0.12",
-        "phpunit/phpunit": "^9.0",
-        "squizlabs/php_codesniffer": "^3.4",
-        "symfony/config": "^5.0",
-        "vimeo/psalm": "^3.11"
+        "doctrine/coding-standard": "^10.0",
+        "ergebnis/composer-normalize": "^2.29",
+        "infection/infection": "^0.26",
+        "laminas/laminas-diactoros": "^2.24",
+        "php-parallel-lint/php-parallel-lint": "^1.3",
+        "phpstan/phpstan": "^1.9",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "phpstan/phpstan-mockery": "^1.1",
+        "phpstan/phpstan-phpunit": "^1.3",
+        "phpstan/phpstan-strict-rules": "^1.4",
+        "phpunit/phpunit": "^9.5",
+        "rector/rector": "^0.15.10",
+        "squizlabs/php_codesniffer": "^3.7",
+        "symfony/config": "^6.0",
+        "vimeo/psalm": "^4.30"
     },
     "autoload": {
         "psr-4": {
@@ -49,23 +49,33 @@
         }
     },
     "scripts": {
-        "coverage": "phpunit --coverage-html=coverage",
+        "coverage": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text",
+        "doctrine": "php bin/console orm:generate-proxies && php bin/console orm:validate-schema --skip-sync",
         "infection": "infection --threads=4 --only-covered",
         "lint": "parallel-lint ./src",
         "phpcbf": "phpcbf",
         "phpcs": "phpcs",
-        "phpstan": "phpstan analyse",
+        "phpstan": "phpstan analyse --xdebug --memory-limit 1G",
         "phpunit": "phpunit --configuration phpunit.xml.dist",
-        "psalm": "psalm",
+        "psalm": "psalm --config psalm.xml",
+        "rector": "rector process --dry-run",
         "test": [
             "@lint",
-            "@phpunit",
             "@phpcs",
+            "@rector",
             "@phpstan",
-            "@psalm"
+            "@psalm",
+            "@phpunit"
         ]
     },
     "support": {
         "issues": "https://github.com/delolmo/symfony-router/issues"
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true
+        }
     }
 }

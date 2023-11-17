@@ -20,10 +20,10 @@ use function implode;
 
 class SymfonyRouterMiddleware implements Middleware
 {
-    private ResponseFactoryInterface $responseFactory;
+    private readonly ResponseFactoryInterface $responseFactory;
 
     public function __construct(
-        private Router $router,
+        private readonly Router $router,
         ResponseFactoryInterface|null $responseFactory = null,
     ) {
         $this->responseFactory = $responseFactory ??

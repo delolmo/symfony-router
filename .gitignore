@@ -1,6 +1,6 @@
 /coverage
 /vendor
 /.php_cs.cache
-/.phpunit.result.cache
+/.phpunit.cache
 /clover.xml
 /infection.log

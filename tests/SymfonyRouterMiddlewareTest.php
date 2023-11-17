@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DelOlmo\Middleware;
 
-use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\Factory;
+use Equip\Dispatch\MiddlewareCollection;
+use Http\Discovery\Psr17Factory;
+use Laminas\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionProperty;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -55,7 +57,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
             ->method('getContext')
             ->willReturn($context);
 
-        $request = Factory::createServerRequest('GET', '/');
+        $request = (new Psr17Factory())->createServerRequest('GET', '/');
 
         $symfonyRequest = (new HttpFoundationFactory())
             ->createRequest($request);
@@ -73,7 +75,8 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $middleware = new SymfonyRouterMiddleware($router, $factory);
 
-        Dispatcher::run([$middleware], $request);
+        (new MiddlewareCollection([$middleware]))
+            ->dispatch($request, static fn (ServerRequestInterface $request) => new Response());
     }
 
     public function testRequestContextBeingUpdated(): void
@@ -87,7 +90,7 @@ class SymfonyRouterMiddlewareTest extends TestCase
             ->method('getContext')
             ->willReturn($context);
 
-        $request = Factory::createServerRequest('GET', '/posts');
+        $request = (new Psr17Factory())->createServerRequest('GET', '/posts');
 
         $symfonyRequest = (new HttpFoundationFactory())
             ->createRequest($request);
@@ -105,12 +108,13 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $middleware = new SymfonyRouterMiddleware($router);
 
-        Dispatcher::run([$middleware], $request);
+        (new MiddlewareCollection([$middleware]))
+            ->dispatch($request, static fn (ServerRequestInterface $request) => new Response());
     }
 
     public function testResourceNotFoundException(): void
     {
-        $request = Factory::createServerRequest('GET', '/posts');
+        $request = (new Psr17Factory())->createServerRequest('GET', '/posts');
 
         $factory = new HttpFoundationFactory();
 
@@ -129,14 +133,15 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $middleware = new SymfonyRouterMiddleware($this->router);
 
-        $response = Dispatcher::run([$middleware], $request);
+        $response = (new MiddlewareCollection([$middleware]))
+            ->dispatch($request, static fn (ServerRequestInterface $request) => new Response());
 
         self::assertSame(404, $response->getStatusCode());
     }
 
     public function testMethodNotAllowedException(): void
     {
-        $request = Factory::createServerRequest('POST', '/users');
+        $request = (new Psr17Factory())->createServerRequest('POST', '/users');
 
         $factory = new HttpFoundationFactory();
 
@@ -155,14 +160,15 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $middleware = new SymfonyRouterMiddleware($this->router);
 
-        $response = Dispatcher::run([$middleware], $request);
+        $response = (new MiddlewareCollection([$middleware]))
+            ->dispatch($request, static fn (ServerRequestInterface $request) => new Response());
 
         self::assertSame(405, $response->getStatusCode());
     }
 
     public function testNoConfigurationException(): void
     {
-        $request = Factory::createServerRequest('POST', '/users');
+        $request = (new Psr17Factory())->createServerRequest('POST', '/posts');
 
         $matcher = $this->createMock(RequestMatcherInterface::class);
 
@@ -177,14 +183,15 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $middleware = new SymfonyRouterMiddleware($this->router);
 
-        $response = Dispatcher::run([$middleware], $request);
+        $response = (new MiddlewareCollection([$middleware]))
+            ->dispatch($request, static fn (ServerRequestInterface $request) => new Response());
 
         self::assertSame(500, $response->getStatusCode());
     }
 
     public function testRouteMatched(): void
     {
-        $request = Factory::createServerRequest('GET', '/users');
+        $request = (new Psr17Factory())->createServerRequest('GET', '/users');
 
         $factory = new HttpFoundationFactory();
 
@@ -203,12 +210,11 @@ class SymfonyRouterMiddlewareTest extends TestCase
 
         $middleware = new SymfonyRouterMiddleware($this->router);
 
-        $dummyFn = static function ($request): void {
-            echo $request->getAttribute('_route');
-        };
+        (new MiddlewareCollection([$middleware]))
+            ->dispatch($request, static function (ServerRequestInterface $request) {
+                self::assertSame('test', $request->getAttribute('_route'));
 
-        $response = Dispatcher::run([$middleware, $dummyFn], $request);
-
-        self::assertSame('test', (string) $response->getBody());
+                return new Response();
+            });
     }
 }

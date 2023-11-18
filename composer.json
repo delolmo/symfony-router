@@ -19,7 +19,6 @@
     },
     "require": {
         "php": "^8.1",
-        "php-http/discovery": "^1.19",
         "psr/http-message": "^1.0 || ^2.0",
         "psr/http-server-middleware": "^1.0",
         "symfony/config": "^6.2",
@@ -32,6 +31,7 @@
         "ergebnis/composer-normalize": "^2.39",
         "infection/infection": "^0.27",
         "laminas/laminas-diactoros": "^3.3",
+        "php-http/discovery": "^1.19",
         "php-parallel-lint/php-parallel-lint": "^1.3",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-deprecation-rules": "^1.1",
@@ -43,6 +43,9 @@
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.15"
+    },
+    "suggest": {
+        "php-http/discovery": "Provides auto-discovery of HTTP factory implementations"
     },
     "autoload": {
         "psr-4": {
@@ -84,5 +87,8 @@
             "@psalm",
             "@phpunit"
         ]
+    },
+    "conflic": {
+        "php-http/discovery": "<1.5"
     }
 }

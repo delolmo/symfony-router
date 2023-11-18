@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "156fbc222f455f3e7425e94764161956",
+    "content-hash": "6f5d5709943e40f3353b77e4c02a21a5",
     "packages": [
         {
             "name": "php-http/discovery",
@@ -1201,249 +1201,6 @@
             "time": "2021-03-30T17:13:30+00:00"
         },
         {
-            "name": "cakephp/core",
-            "version": "5.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cakephp/core.git",
-                "reference": "6549ded1f630a37fba1538b9996044360adf3d8d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/core/zipball/6549ded1f630a37fba1538b9996044360adf3d8d",
-                "reference": "6549ded1f630a37fba1538b9996044360adf3d8d",
-                "shasum": ""
-            },
-            "require": {
-                "cakephp/utility": "^5.0",
-                "league/container": "^4.2",
-                "php": ">=8.1",
-                "psr/container": "^1.1 || ^2.0"
-            },
-            "provide": {
-                "psr/container-implementation": "^2.0"
-            },
-            "suggest": {
-                "cakephp/cache": "To use Configure::store() and restore().",
-                "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
-                "league/container": "To use Container and ServiceProvider classes"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "functions.php"
-                ],
-                "psr-4": {
-                    "Cake\\Core\\": "."
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "CakePHP Community",
-                    "homepage": "https://github.com/cakephp/core/graphs/contributors"
-                }
-            ],
-            "description": "CakePHP Framework Core classes",
-            "homepage": "https://cakephp.org",
-            "keywords": [
-                "cakephp",
-                "core",
-                "framework"
-            ],
-            "support": {
-                "forum": "https://stackoverflow.com/tags/cakephp",
-                "irc": "irc://irc.freenode.org/cakephp",
-                "issues": "https://github.com/cakephp/cakephp/issues",
-                "source": "https://github.com/cakephp/core"
-            },
-            "time": "2023-10-17T11:19:32+00:00"
-        },
-        {
-            "name": "cakephp/event",
-            "version": "5.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cakephp/event.git",
-                "reference": "0dd8ac146a662c7d2883888c31bf4ae319c29810"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/event/zipball/0dd8ac146a662c7d2883888c31bf4ae319c29810",
-                "reference": "0dd8ac146a662c7d2883888c31bf4ae319c29810",
-                "shasum": ""
-            },
-            "require": {
-                "cakephp/core": "^5.0",
-                "php": ">=8.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cake\\Event\\": "."
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "CakePHP Community",
-                    "homepage": "https://github.com/cakephp/event/graphs/contributors"
-                }
-            ],
-            "description": "CakePHP event dispatcher library that helps implementing the observer pattern",
-            "homepage": "https://cakephp.org",
-            "keywords": [
-                "cakephp",
-                "dispatcher",
-                "event",
-                "observer pattern"
-            ],
-            "support": {
-                "forum": "https://stackoverflow.com/tags/cakephp",
-                "irc": "irc://irc.freenode.org/cakephp",
-                "issues": "https://github.com/cakephp/cakephp/issues",
-                "source": "https://github.com/cakephp/event"
-            },
-            "time": "2023-09-30T20:45:06+00:00"
-        },
-        {
-            "name": "cakephp/http",
-            "version": "5.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cakephp/http.git",
-                "reference": "59fdc072f8868effe2d590bc2f2eda285e7cc512"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/http/zipball/59fdc072f8868effe2d590bc2f2eda285e7cc512",
-                "reference": "59fdc072f8868effe2d590bc2f2eda285e7cc512",
-                "shasum": ""
-            },
-            "require": {
-                "cakephp/core": "^5.0",
-                "cakephp/event": "^5.0",
-                "cakephp/utility": "^5.0",
-                "composer/ca-bundle": "^1.2",
-                "laminas/laminas-diactoros": "^3.0",
-                "laminas/laminas-httphandlerrunner": "^2.6",
-                "php": ">=8.1",
-                "psr/http-client": "^1.0.2",
-                "psr/http-factory": "^1.0.2",
-                "psr/http-message": "^1.1 || ^2.0",
-                "psr/http-server-handler": "^1.0.2",
-                "psr/http-server-middleware": "^1.0.2"
-            },
-            "provide": {
-                "psr/http-client-implementation": "^1.0",
-                "psr/http-factory-implementation": "^1.0",
-                "psr/http-server-handler-implementation": "^1.0",
-                "psr/http-server-middleware-implementation": "^1.0"
-            },
-            "suggest": {
-                "cakephp/cache": "To use cache session storage",
-                "cakephp/orm": "To use database session storage"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cake\\Http\\": "."
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "CakePHP Community",
-                    "homepage": "https://github.com/cakephp/http/graphs/contributors"
-                }
-            ],
-            "description": "CakePHP HTTP client and PSR-7, PSR-15, PSR-17, PSR-18 compliant libraries",
-            "homepage": "https://cakephp.org",
-            "keywords": [
-                "cakephp",
-                "http",
-                "psr-15",
-                "psr-17",
-                "psr-18",
-                "psr-7"
-            ],
-            "support": {
-                "forum": "https://stackoverflow.com/tags/cakephp",
-                "irc": "irc://irc.freenode.org/cakephp",
-                "issues": "https://github.com/cakephp/cakephp/issues",
-                "source": "https://github.com/cakephp/http"
-            },
-            "time": "2023-10-22T18:40:37+00:00"
-        },
-        {
-            "name": "cakephp/utility",
-            "version": "5.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cakephp/utility.git",
-                "reference": "1372e99285e304f70d7e54fa1bfe80cf127136f6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/utility/zipball/1372e99285e304f70d7e54fa1bfe80cf127136f6",
-                "reference": "1372e99285e304f70d7e54fa1bfe80cf127136f6",
-                "shasum": ""
-            },
-            "require": {
-                "cakephp/core": "^5.0",
-                "php": ">=8.1"
-            },
-            "suggest": {
-                "ext-intl": "To use Text::transliterate() or Text::slug()",
-                "lib-ICU": "To use Text::transliterate() or Text::slug()"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Cake\\Utility\\": "."
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "CakePHP Community",
-                    "homepage": "https://github.com/cakephp/utility/graphs/contributors"
-                }
-            ],
-            "description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
-            "homepage": "https://cakephp.org",
-            "keywords": [
-                "cakephp",
-                "hash",
-                "inflector",
-                "security",
-                "string",
-                "utility"
-            ],
-            "support": {
-                "forum": "https://stackoverflow.com/tags/cakephp",
-                "irc": "irc://irc.freenode.org/cakephp",
-                "issues": "https://github.com/cakephp/cakephp/issues",
-                "source": "https://github.com/cakephp/utility"
-            },
-            "time": "2023-09-30T20:45:06+00:00"
-        },
-        {
             "name": "colinodell/json5",
             "version": "v2.3.0",
             "source": {
@@ -1533,82 +1290,6 @@
                 }
             ],
             "time": "2022-12-27T16:44:40+00:00"
-        },
-        {
-            "name": "composer/ca-bundle",
-            "version": "1.3.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "76e46335014860eec1aa5a724799a00a2e47cc85"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/76e46335014860eec1aa5a724799a00a2e47cc85",
-                "reference": "76e46335014860eec1aa5a724799a00a2e47cc85",
-                "shasum": ""
-            },
-            "require": {
-                "ext-openssl": "*",
-                "ext-pcre": "*",
-                "php": "^5.3.2 || ^7.0 || ^8.0"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "^0.12.55",
-                "psr/log": "^1.0",
-                "symfony/phpunit-bridge": "^4.2 || ^5",
-                "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Composer\\CaBundle\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
-                }
-            ],
-            "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
-            "keywords": [
-                "cabundle",
-                "cacert",
-                "certificate",
-                "ssl",
-                "tls"
-            ],
-            "support": {
-                "irc": "irc://irc.freenode.org/composer",
-                "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.3.7"
-            },
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/composer",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2023-08-30T09:31:38+00:00"
         },
         {
             "name": "composer/pcre",
@@ -3131,155 +2812,6 @@
             "time": "2023-10-26T11:01:07+00:00"
         },
         {
-            "name": "laminas/laminas-httphandlerrunner",
-            "version": "2.9.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-httphandlerrunner.git",
-                "reference": "d3e84755a17e563b1c5f8290cbfb150210501a77"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-httphandlerrunner/zipball/d3e84755a17e563b1c5f8290cbfb150210501a77",
-                "reference": "d3e84755a17e563b1c5f8290cbfb150210501a77",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
-                "psr/http-message": "^1.0 || ^2.0",
-                "psr/http-message-implementation": "^1.0 || ^2.0",
-                "psr/http-server-handler": "^1.0"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~2.5.0",
-                "laminas/laminas-diactoros": "^3.0.0",
-                "phpunit/phpunit": "^10.1.2",
-                "psalm/plugin-phpunit": "^0.18.4",
-                "vimeo/psalm": "^5.11"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "config-provider": "Laminas\\HttpHandlerRunner\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\HttpHandlerRunner\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Execute PSR-15 RequestHandlerInterface instances and emit responses they generate.",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "components",
-                "laminas",
-                "mezzio",
-                "psr-15",
-                "psr-7"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-httphandlerrunner/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-httphandlerrunner/issues",
-                "rss": "https://github.com/laminas/laminas-httphandlerrunner/releases.atom",
-                "source": "https://github.com/laminas/laminas-httphandlerrunner"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2023-09-04T10:43:03+00:00"
-        },
-        {
-            "name": "league/container",
-            "version": "4.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/container.git",
-                "reference": "375d13cb828649599ef5d48a339c4af7a26cd0ab"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/container/zipball/375d13cb828649599ef5d48a339c4af7a26cd0ab",
-                "reference": "375d13cb828649599ef5d48a339c4af7a26cd0ab",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2 || ^8.0",
-                "psr/container": "^1.1 || ^2.0"
-            },
-            "provide": {
-                "psr/container-implementation": "^1.0"
-            },
-            "replace": {
-                "orno/di": "~2.0"
-            },
-            "require-dev": {
-                "nette/php-generator": "^3.4",
-                "nikic/php-parser": "^4.10",
-                "phpstan/phpstan": "^0.12.47",
-                "phpunit/phpunit": "^8.5.17",
-                "roave/security-advisories": "dev-latest",
-                "scrutinizer/ocular": "^1.8",
-                "squizlabs/php_codesniffer": "^3.6"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.x-dev",
-                    "dev-4.x": "4.x-dev",
-                    "dev-3.x": "3.x-dev",
-                    "dev-2.x": "2.x-dev",
-                    "dev-1.x": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "League\\Container\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Phil Bennett",
-                    "email": "mail@philbennett.co.uk",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A fast and intuitive dependency injection container.",
-            "homepage": "https://github.com/thephpleague/container",
-            "keywords": [
-                "container",
-                "dependency",
-                "di",
-                "injection",
-                "league",
-                "provider",
-                "service"
-            ],
-            "support": {
-                "issues": "https://github.com/thephpleague/container/issues",
-                "source": "https://github.com/thephpleague/container/tree/4.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/philipobenito",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-11-16T10:29:06+00:00"
-        },
-        {
             "name": "localheinz/diff",
             "version": "1.1.1",
             "source": {
@@ -4703,58 +4235,6 @@
             "time": "2021-11-05T16:47:00+00:00"
         },
         {
-            "name": "psr/http-client",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-client.git",
-                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
-                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0 || ^8.0",
-                "psr/http-message": "^1.0 || ^2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Http\\Client\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for HTTP clients",
-            "homepage": "https://github.com/php-fig/http-client",
-            "keywords": [
-                "http",
-                "http-client",
-                "psr",
-                "psr-18"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/http-client"
-            },
-            "time": "2023-09-23T14:17:50+00:00"
-        },
-        {
             "name": "psr/http-factory",
             "version": "1.0.2",
             "source": {
@@ -4921,12 +4401,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "4bca2ea3f3d800c4a25ed3171b03980fa247521b"
+                "reference": "ed4318ac306a1a1d467d19c1a768ff17e2d454b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4bca2ea3f3d800c4a25ed3171b03980fa247521b",
-                "reference": "4bca2ea3f3d800c4a25ed3171b03980fa247521b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ed4318ac306a1a1d467d19c1a768ff17e2d454b1",
+                "reference": "ed4318ac306a1a1d467d19c1a768ff17e2d454b1",
                 "shasum": ""
             },
             "conflict": {
@@ -5007,7 +4487,7 @@
                 "codeigniter4/shield": "<1.0.0.0-beta4",
                 "codiad/codiad": "<=2.8.4",
                 "composer/composer": "<1.10.27|>=2,<2.2.22|>=2.3,<2.6.4",
-                "concrete5/concrete5": "<=9.2.1",
+                "concrete5/concrete5": "<9.2.2",
                 "concrete5/core": "<8.5.8|>=9,<9.1",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
                 "contao/contao": ">=4,<4.4.56|>=4.5,<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4",
@@ -5615,7 +5095,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-15T21:04:09+00:00"
+            "time": "2023-11-17T23:04:10+00:00"
         },
         {
             "name": "sanmai/later",

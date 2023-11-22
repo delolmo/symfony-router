@@ -74,7 +74,7 @@
         "infection": "infection --threads=4 --only-covered",
         "lint": "parallel-lint ./src",
         "phpcbf": "phpcbf",
-        "phpcs": "phpcs",
+        "phpcs": "phpcs -s --colors",
         "phpstan": [
             "@putenv XDEBUG_MODE=off",
             "phpstan analyse --xdebug --memory-limit 1G"

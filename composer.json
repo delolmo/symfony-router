@@ -42,7 +42,7 @@
         "rector/rector": "^0.18",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.7",
-        "vimeo/psalm": "^5.15"
+        "vimeo/psalm": "^5.16"
     },
     "conflict": {
         "php-http/discovery": "<1.5"

@@ -1,23 +1,67 @@
-name: build
+name: PHP Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ "**" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: php-tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-
+  tests:
+    name: PHP ${{ matrix.php }} • composer dev:test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4']
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: nanasess/setup-php@master
-      with:
-        php-version: '8.1'
+      - name: Checkout
+        uses: actions/checkout@v5
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          tools: composer:v2
+          ini-values: |
+            memory_limit=2G
+            xdebug.mode=off  # loaded for platform check, off for speed
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Remove malformed PECL configuration
+        if: matrix.php == '8.4'
+        run: |
+          sudo rm -f /etc/php/${{ matrix.php }}/cli/conf.d/99-pecl.ini || true
+          php -v
 
-    - name: Run tests
-      run: composer test
+      - name: Verify Xdebug is loaded
+        run: |
+          php -v
+          php -m | grep -i xdebug || (echo "Xdebug not loaded" && exit 1)
+          php -i | grep -E "xdebug.mode|xdebug.client_port"
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies (with dev)
+        run: composer install --no-interaction --prefer-dist --ansi
+
+      - name: Run quality + tests
+        run: composer dev:test

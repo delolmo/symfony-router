@@ -18,37 +18,36 @@
         "issues": "https://github.com/delolmo/symfony-router/issues"
     },
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "psr/http-message": "^1.0 || ^2.0",
         "psr/http-server-middleware": "^1.0",
-        "symfony/config": "^6.2",
-        "symfony/psr-http-message-bridge": "^2.3",
-        "symfony/routing": "^6.2"
+        "symfony/config": "^7.0",
+        "symfony/polyfill-php83": "^1.27",
+        "symfony/polyfill-php84": "^1.27",
+        "symfony/psr-http-message-bridge": "^7.0",
+        "symfony/routing": "^7.0"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^12.0",
+        "ext-xdebug": "*",
+        "captainhook/captainhook": "^5.25",
+        "captainhook/plugin-composer": "^5.3",
+        "doctrine/coding-standard": "^13.0",
         "equip/dispatch": "^2.0",
-        "ergebnis/composer-normalize": "^2.39",
-        "infection/infection": "^0.27",
+        "ergebnis/composer-normalize": "^2.47",
+        "infection/infection": "^0.27 || ^0.28",
         "laminas/laminas-diactoros": "^3.3",
-        "php-http/discovery": "^1.19",
-        "php-parallel-lint/php-parallel-lint": "^1.3",
-        "phpstan/phpstan": "^1.10",
-        "phpstan/phpstan-deprecation-rules": "^1.1",
-        "phpstan/phpstan-mockery": "^1.1",
-        "phpstan/phpstan-phpunit": "^1.3",
-        "phpstan/phpstan-strict-rules": "^1.4",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-mockery": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^10.4",
-        "rector/rector": "^0.18",
+        "ramsey/conventional-commits": "^1.6",
+        "rector/rector": "^2.0",
         "roave/security-advisories": "dev-latest",
-        "squizlabs/php_codesniffer": "^3.7",
-        "vimeo/psalm": "^5.16"
-    },
-    "conflict": {
-        "php-http/discovery": "<1.5"
-    },
-    "suggest": {
-        "php-http/discovery": "Provides auto-discovery of HTTP factory implementations"
+        "squizlabs/php_codesniffer": "^3.13",
+        "vimeo/psalm": "^6.0"
     },
     "autoload": {
         "psr-4": {
@@ -62,33 +61,42 @@
     },
     "config": {
         "allow-plugins": {
+            "captainhook/plugin-composer": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "ergebnis/composer-normalize": true,
-            "infection/extension-installer": true,
-            "php-http/discovery": true
-        }
+            "infection/extension-installer": true
+        },
+        "sort-packages": true
     },
     "scripts": {
-        "coverage": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text",
-        "doctrine": "php bin/console orm:generate-proxies && php bin/console orm:validate-schema --skip-sync",
-        "infection": "infection --threads=4 --only-covered",
-        "lint": "parallel-lint ./src",
-        "phpcbf": "phpcbf",
-        "phpcs": "phpcs -s --colors",
-        "phpstan": [
-            "@putenv XDEBUG_MODE=off",
-            "phpstan analyse --xdebug --memory-limit 1G"
+        "dev:coverage": [
+            "@putenv XDEBUG_MODE=coverage",
+            "php -d memory_limit=2G vendor/bin/phpunit --coverage-html var/coverage"
         ],
-        "phpunit": "phpunit --configuration phpunit.xml.dist",
-        "psalm": "psalm --config psalm.xml",
-        "rector": "rector process --dry-run",
-        "test": [
-            "@lint",
-            "@phpcs",
-            "@rector",
-            "@phpstan",
-            "@psalm",
-            "@phpunit"
+        "dev:fix": [
+            "@putenv XDEBUG_MODE=off",
+            "rector process",
+            "@dev:phpcbf"
+        ],
+        "dev:infection": [
+            "@putenv XDEBUG_MODE=coverage",
+            "php -d memory_limit=2G -d opcache.enable_cli=1 vendor/bin/infection --threads=16 --min-msi=98"
+        ],
+        "dev:lint": "parallel-lint ./src",
+        "dev:phpcbf": "phpcbf",
+        "dev:phpcs": "phpcs -s --colors",
+        "dev:phpstan": "phpstan analyse --xdebug --memory-limit 2G",
+        "dev:phpunit": "php vendor/bin/phpunit --configuration phpunit.xml.dist --no-coverage",
+        "dev:psalm": "psalm --config psalm.xml",
+        "dev:rector": "rector process --dry-run",
+        "dev:test": [
+            "@putenv XDEBUG_MODE=off",
+            "@dev:lint",
+            "@dev:phpcs",
+            "@dev:rector",
+            "@dev:phpstan",
+            "@dev:psalm",
+            "@dev:phpunit"
         ]
     }
 }

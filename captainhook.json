@@ -1,0 +1,42 @@
+{
+    "commit-msg": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\Ramsey\\CaptainHook\\ValidateConventionalCommit",
+                "options": {
+                    "typeCase": "lower",
+                    "types": [
+                        "feat",
+                        "fix",
+                        "chore",
+                        "docs",
+                        "style",
+                        "refactor",
+                        "test",
+                        "perf",
+                        "ci",
+                        "build",
+                        "revert"
+                    ],
+                    "scopeCase": null,
+                    "scopeRequired": false,
+                    "scopes": [],
+                    "descriptionCase": null,
+                    "descriptionEndMark": null,
+                    "bodyRequired": false,
+                    "bodyWrapWidth": 100,
+                    "requiredFooters": []
+                }
+            }
+        ]
+    },
+    "pre-commit": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "composer dev:test"
+            }
+        ]
+    }
+}

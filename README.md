@@ -2,15 +2,12 @@
 
  [![Packagist Version](https://img.shields.io/packagist/v/delolmo/symfony-router.svg?style=flat-square)](https://packagist.org/packages/delolmo/symfony-router)
  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
- [![Build Status](https://travis-ci.org/delolmo/symfony-router.svg)](https://travis-ci.org/delolmo/symfony-router)
- [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/delolmo/symfony-router/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/delolmo/symfony-router/?branch=master)
- [![Code Coverage](https://scrutinizer-ci.com/g/delolmo/symfony-router/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/delolmo/symfony-router/?branch=master)
 
 PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.
 
 ## Requirements
 
-* PHP ^8.1
+* PHP ^8.2
 * A [PSR-7 http library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations)
 * A [PSR-17 http factory](https://www.php-fig.org/psr/psr-17/)
 
@@ -21,8 +18,6 @@ This package is installable and autoloadable via Composer as [delolmo/symfony-ro
 ```sh
 composer require delolmo/symfony-router
 ```
-
-You may also want to install [php-http/discovery](https://github.com/php-http/discovery) to autodetect well-known PSR-17 HTTP factory implementations.
 
 ## Example
 
@@ -56,9 +51,9 @@ This example uses a basic anonymous function to print the route's attributes:
 ```php
 
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequest;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\Factory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Routing\RequestContext;
@@ -73,10 +68,10 @@ $router = new Router(
     new RequestContext('/')
 );
 
-$factory = Factory::getRequestFactory();
+$responseFactory = new ResponseFactory();
 
 $dispatcher = new Dispatcher([
-    new DelOlmo\Middleware\SymfonyRouterMiddleware($router, $factory),
+    new DelOlmo\Middleware\SymfonyRouterMiddleware($router, $responseFactory),
     function($request, $next) {
         return new HtmlResponse(json_encode($request->getAttributes()));
     }

@@ -4,7 +4,7 @@
          backupGlobals="false" 
          colors="true"
          bootstrap="vendor/autoload.php" 
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory="var/phpunit">
   <coverage/>
   <testsuites>
     <testsuite name="delolmo/symfony-router">

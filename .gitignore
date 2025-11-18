@@ -1,6 +1,2 @@
-/coverage
+/var
 /vendor
-/.php_cs.cache
-/.phpunit.cache
-/clover.xml
-/infection.log

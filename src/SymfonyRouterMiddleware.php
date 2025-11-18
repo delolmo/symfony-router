@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace DelOlmo\Middleware;
 
-use Http\Discovery\Psr17FactoryDiscovery;
-use LogicException;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,22 +16,20 @@ use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
 
-use function class_exists;
 use function implode;
-use function sprintf;
 
-class SymfonyRouterMiddleware implements Middleware
+final readonly class SymfonyRouterMiddleware implements Middleware
 {
     public function __construct(
-        private readonly Router $router,
-        private readonly ResponseFactoryInterface|null $responseFactory = null,
+        private Router $router,
+        private ResponseFactoryInterface $responseFactory,
     ) {
     }
 
+    #[Override]
     public function process(Request $request, Handler $handler): Response
     {
-        $responseFactory = $this->responseFactory ??
-                $this->getDefaultResponseFactory();
+        $responseFactory = $this->responseFactory;
 
         try {
             $symfonyRequest = (new HttpFoundationFactory())
@@ -63,18 +60,5 @@ class SymfonyRouterMiddleware implements Middleware
         }
 
         return $handler->handle($request);
-    }
-
-    private function getDefaultResponseFactory(): ResponseFactoryInterface
-    {
-        if (class_exists(Psr17FactoryDiscovery::class)) {
-            return Psr17FactoryDiscovery::findResponseFactory();
-        }
-
-        $message = 'You cannot use the "%s" as no PSR-17 factories have been '
-            . 'provided. Try running "composer require '
-            . 'php-http/discovery psr/http-factory-implementation:*".';
-
-        throw new LogicException(sprintf($message, self::class));
     }
 }

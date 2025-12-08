@@ -32,7 +32,7 @@ final readonly class SymfonyRouterMiddleware implements Middleware
         $responseFactory = $this->responseFactory;
 
         try {
-            $symfonyRequest = (new HttpFoundationFactory())
+            $symfonyRequest = new HttpFoundationFactory()
                 ->createRequest($request);
 
             $this->router->getContext()->fromRequest($symfonyRequest);

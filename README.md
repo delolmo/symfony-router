@@ -7,7 +7,7 @@ PSR-15 middleware to use the symfony/routing component and store the route attri
 
 ## Requirements
 
-* PHP ^8.2
+* PHP >=8.4
 * A [PSR-7 http library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations)
 * A [PSR-17 http factory](https://www.php-fig.org/psr/psr-17/)
 

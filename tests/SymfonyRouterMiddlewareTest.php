@@ -59,9 +59,10 @@ final class SymfonyRouterMiddlewareTest extends TestCase
             ->method('getContext')
             ->willReturn($context);
 
-        $serverRequest = (new ServerRequestFactory())->createServerRequest('GET', '/');
+        $serverRequest = new ServerRequestFactory()
+            ->createServerRequest('GET', '/');
 
-        $symfonyRequest = (new HttpFoundationFactory())
+        $symfonyRequest = new HttpFoundationFactory()
             ->createRequest($serverRequest);
 
         $context
@@ -77,7 +78,7 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
         $symfonyRouterMiddleware = new SymfonyRouterMiddleware($router, $factory);
 
-        (new MiddlewareCollection([$symfonyRouterMiddleware]))
+        new MiddlewareCollection([$symfonyRouterMiddleware])
             ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
     }
 
@@ -92,9 +93,10 @@ final class SymfonyRouterMiddlewareTest extends TestCase
             ->method('getContext')
             ->willReturn($context);
 
-        $serverRequest = (new ServerRequestFactory())->createServerRequest('GET', '/posts');
+        $serverRequest = new ServerRequestFactory()
+            ->createServerRequest('GET', '/posts');
 
-        $symfonyRequest = (new HttpFoundationFactory())
+        $symfonyRequest = new HttpFoundationFactory()
             ->createRequest($serverRequest);
 
         $context
@@ -112,19 +114,21 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
         $symfonyRouterMiddleware = new SymfonyRouterMiddleware($router, $responseFactory);
 
-        (new MiddlewareCollection([$symfonyRouterMiddleware]))
+        new MiddlewareCollection([$symfonyRouterMiddleware])
             ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
     }
 
     public function testResourceNotFoundException(): void
     {
-        $serverRequest = (new ServerRequestFactory())->createServerRequest('GET', '/posts');
+        $serverRequest = new ServerRequestFactory()
+            ->createServerRequest('GET', '/posts');
 
         $httpFoundationFactory = new HttpFoundationFactory();
 
-        $symfonyRequest = $httpFoundationFactory->createRequest($serverRequest);
+        $symfonyRequest = $httpFoundationFactory
+            ->createRequest($serverRequest);
 
-        $requestContext = (new RequestContext())
+        $requestContext = new RequestContext()
             ->fromRequest($symfonyRequest);
 
         $urlMatcher = new UrlMatcher($this->routeCollection, $requestContext);
@@ -137,7 +141,7 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
         $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
 
-        $response = (new MiddlewareCollection([$symfonyRouterMiddleware]))
+        $response = new MiddlewareCollection([$symfonyRouterMiddleware])
             ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
 
         self::assertSame(404, $response->getStatusCode());
@@ -145,13 +149,14 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
     public function testMethodNotAllowedException(): void
     {
-        $serverRequest = (new ServerRequestFactory())->createServerRequest('POST', '/users');
+        $serverRequest = new ServerRequestFactory()
+            ->createServerRequest('POST', '/users');
 
         $httpFoundationFactory = new HttpFoundationFactory();
 
         $symfonyRequest = $httpFoundationFactory->createRequest($serverRequest);
 
-        $requestContext = (new RequestContext())
+        $requestContext = new RequestContext()
             ->fromRequest($symfonyRequest);
 
         $urlMatcher = new UrlMatcher($this->routeCollection, $requestContext);
@@ -164,7 +169,7 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
         $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
 
-        $response = (new MiddlewareCollection([$symfonyRouterMiddleware]))
+        $response = new MiddlewareCollection([$symfonyRouterMiddleware])
             ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
 
         self::assertSame(405, $response->getStatusCode());
@@ -172,7 +177,8 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
     public function testNoConfigurationException(): void
     {
-        $serverRequest = (new ServerRequestFactory())->createServerRequest('POST', '/posts');
+        $serverRequest = new ServerRequestFactory()
+            ->createServerRequest('POST', '/posts');
 
         $matcher = $this->createMock(RequestMatcherInterface::class);
 
@@ -187,7 +193,7 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
         $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
 
-        $response = (new MiddlewareCollection([$symfonyRouterMiddleware]))
+        $response = new MiddlewareCollection([$symfonyRouterMiddleware])
             ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
 
         self::assertSame(500, $response->getStatusCode());
@@ -195,13 +201,14 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
     public function testRouteMatched(): void
     {
-        $serverRequest = (new ServerRequestFactory())->createServerRequest('GET', '/users');
+        $serverRequest = new ServerRequestFactory()
+            ->createServerRequest('GET', '/users');
 
         $httpFoundationFactory = new HttpFoundationFactory();
 
         $symfonyRequest = $httpFoundationFactory->createRequest($serverRequest);
 
-        $requestContext = (new RequestContext())
+        $requestContext = new RequestContext()
             ->fromRequest($symfonyRequest);
 
         $urlMatcher = new UrlMatcher($this->routeCollection, $requestContext);
@@ -214,7 +221,7 @@ final class SymfonyRouterMiddlewareTest extends TestCase
 
         $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
 
-        (new MiddlewareCollection([$symfonyRouterMiddleware]))
+        new MiddlewareCollection([$symfonyRouterMiddleware])
             ->dispatch($serverRequest, static function (ServerRequestInterface $serverRequest): Response {
                 self::assertSame('test', $serverRequest->getAttribute('_route'));
 

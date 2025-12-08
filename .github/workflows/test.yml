@@ -1,4 +1,4 @@
-name: PHP Tests
+name: composer dev:test
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4']
+        php: ['8.4']
 
     steps:
       - name: Checkout
@@ -37,7 +37,6 @@ jobs:
             xdebug.mode=off  # loaded for platform check, off for speed
 
       - name: Remove malformed PECL configuration
-        if: matrix.php == '8.4'
         run: |
           sudo rm -f /etc/php/${{ matrix.php }}/cli/conf.d/99-pecl.ini || true
           php -v

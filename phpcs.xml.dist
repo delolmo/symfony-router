@@ -3,11 +3,20 @@
     <!-- display progress -->
     <arg value="p"/>
     <arg name="report" value="full"/>
+    <arg name="cache" value="var/phpcs.cache"/>
 
     <!-- coding standard -->
     <rule ref="Doctrine" />
 
+    <rule ref="Generic.Files.LineEndings">
+        <properties>
+            <property name="eolChar" value="\n"/>
+        </properties>
+    </rule>
+
     <!-- Paths to check -->
     <file>src</file>
     <file>tests</file>
+    <file>composer-dependency-analyser.php</file>
+    <file>rector.php</file>
 </ruleset>

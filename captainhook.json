@@ -28,6 +28,9 @@
                     "bodyWrapWidth": 100,
                     "requiredFooters": []
                 }
+            },
+            {
+                "action": "bin/hook-block-self-credit {$FILE}"
             }
         ]
     },
@@ -35,7 +38,15 @@
         "enabled": true,
         "actions": [
             {
-                "action": "composer dev:test"
+                "action": "bin/pre-commit"
+            }
+        ]
+    },
+    "pre-push": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "bin/pre-push"
             }
         ]
     }

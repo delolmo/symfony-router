@@ -1,0 +1,16 @@
+/.claude/                        export-ignore
+/.github/                        export-ignore
+/bin/                            export-ignore
+/tests/                          export-ignore
+/var/                            export-ignore
+.gitattributes                   export-ignore
+.gitignore                       export-ignore
+AGENTS.md                        export-ignore
+captainhook.json                 export-ignore
+composer-dependency-analyser.php export-ignore
+infection.json.dist              export-ignore
+phpcs.xml.dist                   export-ignore
+phpstan.neon.dist                export-ignore
+phpunit.xml.dist                 export-ignore
+psalm.xml                        export-ignore
+rector.php                       export-ignore

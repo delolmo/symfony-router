@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# What the push hook runs: bin/ci, mutation testing included, unless the
+# watched tree is in the state that already passed it. The library has no
+# integration tests, so the full CI pipeline is cheap enough to run here.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+. bin/lib.sh
+
+run_once pre-push bin/ci

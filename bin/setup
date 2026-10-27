@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# Gets a fresh checkout or worktree working: installs the dependencies, then
+# runs bin/check once, which proves the install and leaves every tool's
+# cache under var/ warm for the scoped runs that follow.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+composer install --no-interaction --no-progress
+
+bin/check

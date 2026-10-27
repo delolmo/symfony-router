@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# What the commit hook runs: bin/check, unless the watched tree is in the
+# state that already passed it. Run it by hand before committing and the
+# hook will find the stamp current and skip.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+. bin/lib.sh
+
+run_once pre-commit bin/check

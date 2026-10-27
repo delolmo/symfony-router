@@ -1,13 +1,13 @@
 # delolmo/symfony-router
 
- [![Packagist Version](https://img.shields.io/packagist/v/delolmo/symfony-router.svg?style=flat-square)](https://packagist.org/packages/delolmo/symfony-router)
- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Packagist Version](https://img.shields.io/packagist/v/delolmo/symfony-router.svg?style=flat-square)](https://packagist.org/packages/delolmo/symfony-router)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.
 
 ## Requirements
 
-* PHP >=8.4
+* PHP ^8.4.27
 * A [PSR-7 http library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations)
 * A [PSR-17 http factory](https://www.php-fig.org/psr/psr-17/)
 
@@ -19,11 +19,17 @@ This package is installable and autoloadable via Composer as [delolmo/symfony-ro
 composer require delolmo/symfony-router
 ```
 
+To load route definitions from files through Symfony's `Router`, as in the example below, also require `symfony/config`:
+
+```sh
+composer require symfony/config
+```
+
 ## Example
 
 Consider Symfony's PhpFileLoader to load route definitions from the following file:
 
-``` php
+```php
 # routes.php
 
 use App\Controller\BlogController;
@@ -31,26 +37,25 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 
 $routes = new RouteCollection();
-$routes->add('blog_list', new Route('/blog', array(
-    'request-handler' => [BlogController::class, 'list']
-)));
-$routes->add('blog_show', new Route('/blog/{slug}', array(
-    'request-handler' => [BlogController::class, 'show']
-)));
+$routes->add('blog_list', new Route('/blog', [
+    'request-handler' => [BlogController::class, 'list'],
+]));
+$routes->add('blog_show', new Route('/blog/{slug}', [
+    'request-handler' => [BlogController::class, 'show'],
+]));
 
 return $routes;
-
 ```
 
-For this example, we will be using `middlewares/utils` for a PSR-15 compliant 
+For this example, we will be using `middlewares/utils` for a PSR-15 compliant
 dispatcher. See [link](https://github.com/middlewares/awesome-psr15-middlewares#dispatcher)
 for more PSR-15 implementations.
 
 This example uses a basic anonymous function to print the route's attributes:
 
 ```php
-
-use Laminas\Diactoros\Response\HtmlResponse;
+use DelOlmo\Middleware\SymfonyRouterMiddleware;
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequest;
 use Middlewares\Utils\Dispatcher;
@@ -59,36 +64,23 @@ use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Router;
 
-$fileLocator = new FileLocator(array(__DIR__));
-
 $router = new Router(
-    new PhpFileLoader($fileLocator),
+    new PhpFileLoader(new FileLocator([__DIR__])),
     'routes.php',
-    array('cache_dir' => __DIR__ . '/cache'),
-    new RequestContext('/')
+    ['cache_dir' => __DIR__ . '/cache'],
+    new RequestContext('/'),
 );
 
-$responseFactory = new ResponseFactory();
-
 $dispatcher = new Dispatcher([
-    new DelOlmo\Middleware\SymfonyRouterMiddleware($router, $responseFactory),
-    function($request, $next) {
-        return new HtmlResponse(json_encode($request->getAttributes()));
-    }
+    new SymfonyRouterMiddleware(router: $router, responseFactory: new ResponseFactory()),
+    fn ($request) => new JsonResponse($request->getAttributes()),
 ]);
 
-// Try matching a /blog request
+// {"request-handler": ["App\\Controller\\BlogController", "list"], "_route": "blog_list"}
 $response = $dispatcher->dispatch(new ServerRequest([], [], '/blog'));
 
-// Will return {"_route": "blog_list", "request-handler" => ["App\Controller\BlogController", "list"]}
-$c->get('emitter')->emit($response);
-
-// Try matching a /blog/hello-world request
+// {"request-handler": ["App\\Controller\\BlogController", "show"], "slug": "hello-world", "_route": "blog_show"}
 $response = $dispatcher->dispatch(new ServerRequest([], [], '/blog/hello-world'));
-
-// Will return {"_route": "blog_show", "request-handler" => ["App\Controller\BlogController", "show"], "slug" => "hello-world"}
-$c->get('emitter')->emit($response);
-
 ```
 
 ## Options
@@ -97,10 +89,19 @@ The constructor takes two arguments:
 
 ```php
 __construct(
-    \Symfony\Component\Routing\Router $router,
-    \Psr\Http\Message\ResponseFactoryInterface $responseFactory
+    \Symfony\Component\Routing\Matcher\RequestMatcherInterface&\Symfony\Component\Routing\RequestContextAwareInterface $router,
+    \Psr\Http\Message\ResponseFactoryInterface $responseFactory,
 )
 ```
 
-The router instance to use and a PSR-17 factory to create the error 
-responses (`404` or `405`).
+The router to match with (a Symfony `Router`, or a `UrlMatcher` for routes built in code) and a PSR-17 factory to create the error responses:
+
+| Outcome | Response |
+|---|---|
+| No route matches the path | `404 Not Found` |
+| A route matches the path but not the method | `405 Method Not Allowed`, with an `Allow` header listing the allowed methods |
+| The router has no routes at all | `500 Internal Server Error` |
+
+Error responses carry the standard reason phrase, never the routing exception's message, which can echo the requested path.
+
+Before matching, the router's context takes the request's host, scheme and base URL, so URLs a `Router` generates while the request is handled match it.

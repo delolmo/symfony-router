@@ -70,4 +70,4 @@ A comment states what the code and types cannot: a contract the signature hides 
 
 ## Agents and Hooks
 
-Agents, skills and the Bash hooks come from the `bluenostrum` plugin marketplace (`core` is the hooks, `php` the agents and skills), enabled in `.claude/settings.json`. They read this file for the conventions.
+Agents, skills and the Bash hooks come from the `bluenostrum` plugin marketplace (`core` is the hooks, `php` the agents and skills), enabled in your own Claude Code settings; `.claude/` is ignored. They read this file for the conventions.

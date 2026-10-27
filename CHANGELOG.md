@@ -4,7 +4,14 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
-## [4.1.0] - 2026-10-27
+## [4.1.1] - 2026-10-27
+
+### Changed
+
+- Same code as 4.1.0, republished from a history without the `.claude/` directory. 4.1.0 is withdrawn: its tag was moved after Packagist published it, and Packagist keeps published versions immutable.
+- `.claude/` is ignored.
+
+## [4.1.0] - 2026-10-27 [YANKED]
 
 ### Security
 
@@ -22,6 +29,6 @@ All notable changes to this project are documented in this file. The format foll
 
 - Last release before this changelog.
 
-[Unreleased]: https://github.com/delolmo/symfony-router/compare/4.1.0...HEAD
-[4.1.0]: https://github.com/delolmo/symfony-router/compare/4.0...4.1.0
+[Unreleased]: https://github.com/delolmo/symfony-router/compare/4.1.1...HEAD
+[4.1.1]: https://github.com/delolmo/symfony-router/compare/4.0...4.1.1
 [4.0]: https://github.com/delolmo/symfony-router/releases/tag/4.0

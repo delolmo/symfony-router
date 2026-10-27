@@ -108,7 +108,7 @@
         ],
         "phpcs": [
             "@putenv XDEBUG_MODE=off",
-            "phpcs -s --colors"
+            "phpcs -s --colors --cache"
         ],
         "phpstan": [
             "@putenv XDEBUG_MODE=off",

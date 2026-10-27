@@ -3,7 +3,6 @@
     <!-- display progress -->
     <arg value="p"/>
     <arg name="report" value="full"/>
-    <arg name="cache" value="var/phpcs.cache"/>
 
     <!-- coding standard -->
     <rule ref="Doctrine" />

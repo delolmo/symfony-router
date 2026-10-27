@@ -2,7 +2,7 @@
 
 ## Environment and tools
 
-- PHP 8.4.27+ on `PATH` (the floor; CI also runs 8.5), Composer v2, Git, `gh` for issues and PRs.
+- PHP 8.4.27+ or 8.5.12+ on `PATH`, the releases fixing CVE-2026-109618 and CVE-2026-109619 (CI runs both), Composer v2, Git, `gh` for issues and PRs.
 - Prefer the dedicated tools: Glob, Grep, Read, Edit, Write over `find`, `grep`, `cat`, `sed`, `echo`.
 - One command per Bash call: no `|`, `&&` or `;`, except piping a composer script or `bin/` pipeline to `grep`, `head`, `tail` or `wc -l`.
 - No self-credit in commits, PRs or any artifact; `bin/hook-block-self-credit` rejects it. In assessments and reviews, no praise: lead with gaps, blockers and next steps.

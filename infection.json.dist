@@ -1,5 +1,6 @@
 {
     "timeout": 10,
+    "tmpDir": "var/infection",
     "source": {
         "directories": [
             "src\/"
@@ -9,6 +10,16 @@
         "text": "var/infection.log"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "ArrayItemRemoval": {
+            "settings": {
+                "remove": "all"
+            }
+        }
+    },
+    "minMsi": 100,
+    "minCoveredMsi": 100,
+    "phpUnit": {
+        "configDir": "."
     }
 }

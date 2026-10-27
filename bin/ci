@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# What CI runs: every tool one after another, then mutation testing of
+# the whole tree. Serial, because a CI runner has few cores and the
+# reports are read from the log. No test may be skipped, so a skipped
+# test means a misconfigured job and fails it.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+composer audit
+composer validate --strict
+composer normalize --dry-run
+composer lint
+composer deps
+composer phpcs
+composer rector
+composer phpstan
+composer psalm
+composer phpunit -- --fail-on-skipped
+composer infection

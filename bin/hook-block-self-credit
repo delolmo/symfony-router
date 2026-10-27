@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Blocks commit messages that contain AI self-credit patterns.
+# Project convention: no AI credit in commits, PRs, or any artifact.
+#
+# Usage: hook-block-self-credit <commit-msg-file>
+
+MSG_FILE="${1:?Usage: hook-block-self-credit <commit-msg-file>}"
+
+if [[ ! -f "$MSG_FILE" ]]; then
+    printf 'hook-block-self-credit: file not found: %s\n' "$MSG_FILE" >&2
+    exit 2
+fi
+
+PATTERNS=(
+    # Claude / Anthropic
+    'co-authored-by:.*claude'
+    'generated with .*claude'
+    'noreply@anthropic\.com'
+    'claude\.com/claude-code'
+    # GitHub Copilot
+    'co-authored-by:.*copilot'
+    'generated with .*copilot'
+    'noreply@github\.com.*copilot'
+    # OpenAI / ChatGPT
+    'co-authored-by:.*(chatgpt|openai)'
+    'generated with .*(chatgpt|openai)'
+    # Cursor
+    'co-authored-by:.*cursor'
+    'generated with .*cursor'
+    # Generic AI agent patterns
+    'co-authored-by:.*\bai\b'
+    'generated (by|with) .*\b(ai|llm)\b'
+)
+
+CONTENT=$(cat "$MSG_FILE")
+
+for PATTERN in "${PATTERNS[@]}"; do
+    if echo "$CONTENT" | grep -iqE "$PATTERN"; then
+        printf 'Blocked: commit message contains AI self-credit (pattern: %s).\n' "$PATTERN" >&2
+        exit 2
+    fi
+done
+
+# Check for robot emoji (U+1F916) — grep -P for unicode
+if echo "$CONTENT" | grep -qP '\x{1F916}'; then
+    printf 'Blocked: commit message contains AI self-credit (robot emoji).\n' >&2
+    exit 2
+fi

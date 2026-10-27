@@ -3,30 +3,24 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\LevelSetList;
-use Rector\Set\ValueObject\SetList;
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->paths([
+return RectorConfig::configure()
+    ->withPaths([
         __DIR__ . '/src',
         __DIR__ . '/tests',
-    ]);
-
-    $rectorConfig->cacheDirectory(
-        directoryPath: __DIR__ . '/var/rector',
+    ])
+    ->withRootFiles()
+    ->withCache(__DIR__ . '/var/rector')
+    ->withPhpSets()
+    ->withComposerBased(phpunit: true)
+    ->withAttributesSets(phpunit: true)
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true,
+        codingStyle: true,
+        typeDeclarations: true,
+        privatization: true,
+        phpunitCodeQuality: true,
+        phpunitNarrowAsserts: true,
+        phpunitMockToStub: true,
     );
-
-    $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_84,
-        SetList::CODE_QUALITY,
-        SetList::CODING_STYLE,
-        SetList::TYPE_DECLARATION,
-        SetList::PRIVATIZATION,
-        SetList::INSTANCEOF,
-        SetList::EARLY_RETURN,
-        SetList::DEAD_CODE,
-        SetList::NAMING,
-        SetList::PHP_POLYFILLS,
-        SetList::RECTOR_PRESET,
-    ]);
-};

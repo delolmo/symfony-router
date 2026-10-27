@@ -14,49 +14,54 @@ use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\RequestContextAwareInterface;
 
+use function array_keys;
 use function implode;
 
+/**
+ * Matches the request against Symfony routes and stores the route's
+ * parameters as request attributes before handing it on. The router's
+ * context takes the request's host, scheme and base URL first, so URLs a
+ * Router generates while the request is handled match it. Answers 404 when
+ * no route matches, 405 with an Allow header when the method is not
+ * allowed, and 500 when there are no routes at all. Error responses carry
+ * the standard reason phrase, never the routing exception's message.
+ */
 final readonly class SymfonyRouterMiddleware implements Middleware
 {
+    private HttpFoundationFactory $httpFoundationFactory;
+
+    /** @param RequestMatcherInterface&RequestContextAwareInterface $router A Router, or a UrlMatcher */
     public function __construct(
-        private Router $router,
+        private RequestMatcherInterface&RequestContextAwareInterface $router,
         private ResponseFactoryInterface $responseFactory,
     ) {
+        $this->httpFoundationFactory = new HttpFoundationFactory();
     }
 
     #[Override]
     public function process(Request $request, Handler $handler): Response
     {
-        $responseFactory = $this->responseFactory;
+        $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
+
+        $this->router->getContext()->fromRequest($symfonyRequest);
 
         try {
-            $symfonyRequest = new HttpFoundationFactory()
-                ->createRequest($request);
-
-            $this->router->getContext()->fromRequest($symfonyRequest);
-
-            /** @psalm-var array<string,mixed> $route */
-            $route = $this->router
-                ->matchRequest($symfonyRequest);
+            $parameters = $this->router->matchRequest($symfonyRequest);
         } catch (MethodNotAllowedException $e) {
-            $allows = implode(', ', $e->getAllowedMethods());
-
-            return $responseFactory
-                ->createResponse(405, $e->getMessage())
-                ->withHeader('Allow', $allows);
-        } catch (NoConfigurationException $e) {
-            return $responseFactory
-                ->createResponse(500, $e->getMessage());
-        } catch (ResourceNotFoundException $e) {
-            return $responseFactory
-                ->createResponse(404, $e->getMessage());
+            return $this->responseFactory
+                ->createResponse(405)
+                ->withHeader('Allow', implode(', ', $e->getAllowedMethods()));
+        } catch (NoConfigurationException) {
+            return $this->responseFactory->createResponse(500);
+        } catch (ResourceNotFoundException) {
+            return $this->responseFactory->createResponse(404);
         }
 
-        /** @psalm-var mixed $value */
-        foreach ($route as $key => $value) {
-            $request = $request->withAttribute($key, $value);
+        foreach (array_keys($parameters) as $name) {
+            $request = $request->withAttribute((string) $name, $parameters[$name]);
         }
 
         return $handler->handle($request);

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Runs every tool except Infection all at once, and prints a line per tool,
+# the log of each that failed, and a summary line; CHECK_VERBOSE=1 prints
+# every log. The wall-clock time is that of the slowest tool. Exits non-zero
+# when any tool failed.
+set -uo pipefail
+
+cd "$(dirname "$0")/.."
+
+. bin/lib.sh
+
+run_parallel \
+    "composer audit" \
+    "composer validate --strict" \
+    "composer normalize --dry-run" \
+    "composer lint" \
+    "composer deps" \
+    "composer phpcs" \
+    "composer rector" \
+    "composer phpstan" \
+    "composer psalm" \
+    "composer phpunit"

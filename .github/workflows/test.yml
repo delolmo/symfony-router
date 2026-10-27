@@ -1,4 +1,4 @@
-name: composer dev:test
+name: bin/ci
 
 on:
   push:
@@ -15,16 +15,22 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }} • composer dev:test
+    name: PHP ${{ matrix.php }} • bin/ci
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.4']
+        include:
+          - php: '8.4'
+            floor: '8.4.27'
+          - php: '8.5'
+            floor: '8.5.12'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -32,27 +38,28 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: xdebug
           tools: composer:v2
-          ini-values: |
-            memory_limit=2G
-            xdebug.mode=off  # loaded for platform check, off for speed
 
-      - name: Remove malformed PECL configuration
+      # setup-php appends ini-values to conf.d/99-pecl.ini; keep them in a
+      # file of our own so no later cleanup can drop them.
+      - name: Pin project php.ini values
         run: |
-          sudo rm -f /etc/php/${{ matrix.php }}/cli/conf.d/99-pecl.ini || true
+          printf 'memory_limit=2G\nzend.assertions=1\nxdebug.mode=off\n' \
+            | sudo tee /etc/php/${{ matrix.php }}/cli/conf.d/99-zz-project.ini
           php -v
+          php -i | grep -E "^(zend.assertions|xdebug.mode|memory_limit) "
 
-      - name: Verify Xdebug is loaded
-        run: |
-          php -v
-          php -m | grep -i xdebug || (echo "Xdebug not loaded" && exit 1)
-          php -i | grep -E "xdebug.mode|xdebug.client_port"
+      # composer.json pins the platform to the lowest supported release, so
+      # Composer never checks the runtime: fail before testing on a release
+      # without the CVE-2026-109618 and CVE-2026-109619 fixes.
+      - name: Require a PHP release with the CVE fixes
+        run: php -r 'if (version_compare(PHP_VERSION, $argv[1], "<")) { fwrite(STDERR, "PHP " . PHP_VERSION . " is below " . $argv[1] . "\n"); exit(1); }' '${{ matrix.floor }}'
 
       - name: Get Composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Cache Composer
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -63,4 +70,74 @@ jobs:
         run: composer install --no-interaction --prefer-dist --ansi
 
       - name: Run quality + tests
-        run: composer dev:test
+        run: bin/ci
+
+  lowest-deps:
+    name: PHP ${{ matrix.php }} • lowest production deps
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.4'
+            floor: '8.4.27'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Pin project php.ini values
+        run: |
+          printf 'memory_limit=2G\nzend.assertions=1\n' \
+            | sudo tee /etc/php/${{ matrix.php }}/cli/conf.d/99-zz-project.ini
+          php -v
+
+      # composer.json pins the platform to the lowest supported release, so
+      # Composer never checks the runtime: fail before testing on a release
+      # without the CVE-2026-109618 and CVE-2026-109619 fixes.
+      - name: Require a PHP release with the CVE fixes
+        run: php -r 'if (version_compare(PHP_VERSION, $argv[1], "<")) { fwrite(STDERR, "PHP " . PHP_VERSION . " is below " . $argv[1] . "\n"); exit(1); }' '${{ matrix.floor }}'
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-lowest-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-lowest-
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies (locked)
+        run: composer install --no-interaction --prefer-dist --ansi
+
+      - name: Downgrade production dependencies to lowest versions
+        run: |
+          PACKAGES=$(php -r '$j = json_decode(file_get_contents("composer.json"), true); foreach (array_keys($j["require"]) as $p) { if ($p !== "php" && !str_starts_with($p, "ext-")) { echo $p, " "; } }')
+          composer update --prefer-lowest --prefer-stable --with-all-dependencies --no-interaction --prefer-dist --ansi $PACKAGES
+
+      - name: Show resolved production versions
+        run: composer show --direct --no-dev
+
+      # The analysers see the lower bounds' signatures and types, which the
+      # tests alone cannot prove the code still matches.
+      - name: Run PHPStan against lowest versions
+        run: composer phpstan
+
+      - name: Run Psalm against lowest versions
+        run: composer psalm
+
+      - name: Run PHPUnit against lowest versions
+        run: composer phpunit

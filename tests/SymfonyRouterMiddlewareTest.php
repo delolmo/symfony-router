@@ -2,230 +2,142 @@
 
 declare(strict_types=1);
 
-namespace DelOlmo\Middleware;
+namespace DelOlmo\Middleware\Tests;
 
-use Equip\Dispatch\MiddlewareCollection;
-use Laminas\Diactoros\Response;
+use DelOlmo\Middleware\SymfonyRouterMiddleware;
+use DelOlmo\Middleware\Tests\Mock\SpyRequestHandler;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequestFactory;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use ReflectionProperty;
-use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\Routing\Exception\NoConfigurationException;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Router;
 
+#[CoversClass(SymfonyRouterMiddleware::class)]
 final class SymfonyRouterMiddlewareTest extends TestCase
 {
-    private RouteCollection $routeCollection;
-
-    private Router $router;
-
-    private MockObject $loader;
-
-    protected function setUp(): void
+    #[TestDox('A matched route hands the request on with the route parameters as attributes')]
+    public function testMatchedRouteStoresParametersAsAttributes(): void
     {
-        $this->loader = $this->getMockBuilder(LoaderInterface::class)->getMock();
-        $this->router = new Router($this->loader, 'routing.yml');
+        $routes = new RouteCollection();
+        $routes->add('blog_show', new Route('/blog/{slug}', ['handler' => 'show']));
 
-        $this->routeCollection = new RouteCollection();
-        $this->routeCollection->add('test', new Route('/users', [], [], [], '', [], ['GET']));
+        $handler = new SpyRequestHandler();
+
+        $response = $this->middleware($routes)->process(
+            new ServerRequestFactory()->createServerRequest('GET', '/blog/hello-world'),
+            $handler,
+        );
+
+        $handledRequest = $handler->handledRequest();
+
+        Assert::assertSame(200, $response->getStatusCode());
+        Assert::assertNotNull($handledRequest);
+        Assert::assertSame(
+            ['handler' => 'show', 'slug' => 'hello-world', '_route' => 'blog_show'],
+            $handledRequest->getAttributes(),
+        );
     }
 
-    public function testNonDefaultResponseFactory(): void
+    #[TestDox('A numeric route parameter name becomes a string attribute name')]
+    public function testNumericParameterNameBecomesStringAttribute(): void
     {
-        $factory = $this->createMock(ResponseFactoryInterface::class);
+        $routes = new RouteCollection();
+        $routes->add('numeric', new Route('/numeric', ['zero']));
 
-        $factory
-          ->expects(self::once())
-          ->method('createResponse')
-          ->with(404);
+        $handler = new SpyRequestHandler();
 
-        $context = $this->createMock(RequestContext::class);
+        $this->middleware($routes)->process(
+            new ServerRequestFactory()->createServerRequest('GET', '/numeric'),
+            $handler,
+        );
 
-        $router = $this->createMock(Router::class);
-
-        $router
-            ->expects(self::once())
-            ->method('getContext')
-            ->willReturn($context);
-
-        $serverRequest = new ServerRequestFactory()
-            ->createServerRequest('GET', '/');
-
-        $symfonyRequest = new HttpFoundationFactory()
-            ->createRequest($serverRequest);
-
-        $context
-            ->expects(self::once())
-            ->method('fromRequest')
-            ->with($symfonyRequest);
-
-        $router
-            ->expects(self::once())
-            ->method('matchRequest')
-            ->with($symfonyRequest)
-            ->will(self::throwException(new ResourceNotFoundException()));
-
-        $symfonyRouterMiddleware = new SymfonyRouterMiddleware($router, $factory);
-
-        new MiddlewareCollection([$symfonyRouterMiddleware])
-            ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
+        Assert::assertSame('zero', $handler->handledRequest()?->getAttribute('0'));
     }
 
-    public function testRequestContextBeingUpdated(): void
+    #[TestDox('The router context takes the request host and scheme, for URLs generated while handling')]
+    public function testRouterContextIsUpdatedFromRequest(): void
     {
-        $context = $this->createMock(RequestContext::class);
+        $routes = new RouteCollection();
+        $routes->add('admin', new Route('/', host: 'admin.example.com'));
 
-        $router = $this->createMock(Router::class);
+        $urlMatcher = new UrlMatcher($routes, new RequestContext());
 
-        $router
-            ->expects(self::once())
-            ->method('getContext')
-            ->willReturn($context);
+        $symfonyRouterMiddleware = new SymfonyRouterMiddleware(
+            router: $urlMatcher,
+            responseFactory: new ResponseFactory(),
+        );
 
-        $serverRequest = new ServerRequestFactory()
-            ->createServerRequest('GET', '/posts');
+        $symfonyRouterMiddleware->process(
+            new ServerRequestFactory()->createServerRequest('GET', 'https://admin.example.com/'),
+            new SpyRequestHandler(),
+        );
 
-        $symfonyRequest = new HttpFoundationFactory()
-            ->createRequest($serverRequest);
-
-        $context
-            ->expects(self::once())
-            ->method('fromRequest')
-            ->with($symfonyRequest);
-
-        $router
-            ->expects(self::once())
-            ->method('matchRequest')
-            ->with($symfonyRequest)
-            ->willReturn([]);
-
-        $responseFactory = new ResponseFactory();
-
-        $symfonyRouterMiddleware = new SymfonyRouterMiddleware($router, $responseFactory);
-
-        new MiddlewareCollection([$symfonyRouterMiddleware])
-            ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
+        Assert::assertSame('admin.example.com', $urlMatcher->getContext()->getHost());
+        Assert::assertSame('https', $urlMatcher->getContext()->getScheme());
     }
 
-    public function testResourceNotFoundException(): void
+    #[TestDox('No matching route answers 404 with the standard reason phrase')]
+    public function testUnknownPathAnswersNotFound(): void
     {
-        $serverRequest = new ServerRequestFactory()
-            ->createServerRequest('GET', '/posts');
+        $routes = new RouteCollection();
+        $routes->add('users', new Route('/users'));
 
-        $httpFoundationFactory = new HttpFoundationFactory();
+        $handler = new SpyRequestHandler();
 
-        $symfonyRequest = $httpFoundationFactory
-            ->createRequest($serverRequest);
+        $response = $this->middleware($routes)->process(
+            new ServerRequestFactory()->createServerRequest('GET', '/posts'),
+            $handler,
+        );
 
-        $requestContext = new RequestContext()
-            ->fromRequest($symfonyRequest);
-
-        $urlMatcher = new UrlMatcher($this->routeCollection, $requestContext);
-
-        $reflectionProperty = new ReflectionProperty($this->router, 'matcher');
-
-        $reflectionProperty->setValue($this->router, $urlMatcher);
-
-        $responseFactory = new ResponseFactory();
-
-        $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
-
-        $response = new MiddlewareCollection([$symfonyRouterMiddleware])
-            ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
-
-        self::assertSame(404, $response->getStatusCode());
+        Assert::assertSame(404, $response->getStatusCode());
+        Assert::assertSame('Not Found', $response->getReasonPhrase());
+        Assert::assertNull($handler->handledRequest());
     }
 
-    public function testMethodNotAllowedException(): void
+    #[TestDox('A method the route does not allow answers 405 with the allowed methods')]
+    public function testDisallowedMethodAnswersMethodNotAllowed(): void
     {
-        $serverRequest = new ServerRequestFactory()
-            ->createServerRequest('POST', '/users');
+        $routes = new RouteCollection();
+        $routes->add('users', new Route('/users', methods: ['GET', 'PUT']));
 
-        $httpFoundationFactory = new HttpFoundationFactory();
+        $handler = new SpyRequestHandler();
 
-        $symfonyRequest = $httpFoundationFactory->createRequest($serverRequest);
+        $response = $this->middleware($routes)->process(
+            new ServerRequestFactory()->createServerRequest('POST', '/users'),
+            $handler,
+        );
 
-        $requestContext = new RequestContext()
-            ->fromRequest($symfonyRequest);
-
-        $urlMatcher = new UrlMatcher($this->routeCollection, $requestContext);
-
-        $reflectionProperty = new ReflectionProperty($this->router, 'matcher');
-
-        $reflectionProperty->setValue($this->router, $urlMatcher);
-
-        $responseFactory = new ResponseFactory();
-
-        $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
-
-        $response = new MiddlewareCollection([$symfonyRouterMiddleware])
-            ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
-
-        self::assertSame(405, $response->getStatusCode());
+        Assert::assertSame(405, $response->getStatusCode());
+        Assert::assertSame('Method Not Allowed', $response->getReasonPhrase());
+        Assert::assertSame('GET, PUT', $response->getHeaderLine('Allow'));
+        Assert::assertNull($handler->handledRequest());
     }
 
-    public function testNoConfigurationException(): void
+    #[TestDox('A router without routes answers 500 with the standard reason phrase')]
+    public function testNoRoutesAnswersInternalServerError(): void
     {
-        $serverRequest = new ServerRequestFactory()
-            ->createServerRequest('POST', '/posts');
+        $handler = new SpyRequestHandler();
 
-        $matcher = $this->createMock(RequestMatcherInterface::class);
+        $response = $this->middleware(new RouteCollection())->process(
+            new ServerRequestFactory()->createServerRequest('GET', '/'),
+            $handler,
+        );
 
-        $matcher->method('matchRequest')
-            ->will(self::throwException(new NoConfigurationException()));
-
-        $reflectionProperty = new ReflectionProperty($this->router, 'matcher');
-
-        $reflectionProperty->setValue($this->router, $matcher);
-
-        $responseFactory = new ResponseFactory();
-
-        $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
-
-        $response = new MiddlewareCollection([$symfonyRouterMiddleware])
-            ->dispatch($serverRequest, static fn (ServerRequestInterface $serverRequest): Response => new Response());
-
-        self::assertSame(500, $response->getStatusCode());
+        Assert::assertSame(500, $response->getStatusCode());
+        Assert::assertSame('Internal Server Error', $response->getReasonPhrase());
+        Assert::assertNull($handler->handledRequest());
     }
 
-    public function testRouteMatched(): void
+    private function middleware(RouteCollection $routes): SymfonyRouterMiddleware
     {
-        $serverRequest = new ServerRequestFactory()
-            ->createServerRequest('GET', '/users');
-
-        $httpFoundationFactory = new HttpFoundationFactory();
-
-        $symfonyRequest = $httpFoundationFactory->createRequest($serverRequest);
-
-        $requestContext = new RequestContext()
-            ->fromRequest($symfonyRequest);
-
-        $urlMatcher = new UrlMatcher($this->routeCollection, $requestContext);
-
-        $reflectionProperty = new ReflectionProperty($this->router, 'matcher');
-
-        $reflectionProperty->setValue($this->router, $urlMatcher);
-
-        $responseFactory = new ResponseFactory();
-
-        $symfonyRouterMiddleware = new SymfonyRouterMiddleware($this->router, $responseFactory);
-
-        new MiddlewareCollection([$symfonyRouterMiddleware])
-            ->dispatch($serverRequest, static function (ServerRequestInterface $serverRequest): Response {
-                self::assertSame('test', $serverRequest->getAttribute('_route'));
-
-                return new Response();
-            });
+        return new SymfonyRouterMiddleware(
+            router: new UrlMatcher($routes, new RequestContext()),
+            responseFactory: new ResponseFactory(),
+        );
     }
 }

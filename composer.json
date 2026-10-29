@@ -1,15 +1,17 @@
 {
     "name": "delolmo/symfony-router",
-    "description": "PSR-15 middleware to use the symfony/routing component and store the route attributes in the request.",
+    "description": "PSR-15 middleware that matches requests with symfony/routing and stores the route attributes in the PSR-7 request.",
     "license": "MIT",
     "type": "library",
     "keywords": [
         "psr-7",
         "psr-15",
+        "psr-17",
         "middleware",
         "http",
         "server",
         "router",
+        "routing",
         "symfony",
         "symfony-routing"
     ],

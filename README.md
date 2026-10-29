@@ -83,6 +83,32 @@ $response = $dispatcher->dispatch(new ServerRequest([], [], '/blog'));
 $response = $dispatcher->dispatch(new ServerRequest([], [], '/blog/hello-world'));
 ```
 
+## Mapping requests with Valinor
+
+The route parameters are request attributes, so a handler further down the pipeline can pass them to [cuyz/valinor](https://github.com/cuyz/valinor) as the route parameters of an `HttpRequest` and map the whole request to a typed object:
+
+```php
+use CuyZ\Valinor\Mapper\Http\FromBody;
+use CuyZ\Valinor\Mapper\Http\FromRoute;
+use CuyZ\Valinor\Mapper\Http\HttpRequest;
+use CuyZ\Valinor\MapperBuilder;
+
+final class PostComment
+{
+    public function __construct(
+        #[FromRoute] public string $slug,
+        #[FromBody] public string $content,
+    ) {}
+}
+
+$mapper = new MapperBuilder()
+    ->allowSuperfluousKeys() // the attributes also hold _route and the route defaults
+    ->allowScalarValueCasting()
+    ->mapper();
+
+$comment = $mapper->map(PostComment::class, HttpRequest::fromPsr($request, $request->getAttributes()));
+```
+
 ## Options
 
 The constructor takes two arguments:

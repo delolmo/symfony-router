@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+## [4.1.2] - 2026-10-29
+
+### Changed
+
+- The package description and keywords say more precisely what the middleware does, so it is easier to find on Packagist.
+
 ## [4.1.1] - 2026-10-27
 
 ### Changed
@@ -29,6 +35,7 @@ All notable changes to this project are documented in this file. The format foll
 
 - Last release before this changelog.
 
-[Unreleased]: https://github.com/delolmo/symfony-router/compare/4.1.1...HEAD
+[Unreleased]: https://github.com/delolmo/symfony-router/compare/4.1.2...HEAD
+[4.1.2]: https://github.com/delolmo/symfony-router/compare/4.1.1...4.1.2
 [4.1.1]: https://github.com/delolmo/symfony-router/compare/4.0...4.1.1
 [4.0]: https://github.com/delolmo/symfony-router/releases/tag/4.0

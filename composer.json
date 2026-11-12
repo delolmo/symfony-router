@@ -31,16 +31,16 @@
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
-        "symfony/psr-http-message-bridge": "^8.0",
-        "symfony/routing": "^8.0.13"
+        "symfony/psr-http-message-bridge": "^8.1",
+        "symfony/routing": "^8.1"
     },
     "require-dev": {
         "captainhook/captainhook-phar": "^5.29",
         "captainhook/plugin-composer": "^5.3",
         "doctrine/coding-standard": "^14.0",
-        "ergebnis/composer-normalize": "^2.54",
+        "ergebnis/composer-normalize": "^2.56",
         "infection/infection": "^0.35",
-        "laminas/laminas-diactoros": "^3.6",
+        "laminas/laminas-diactoros": "^3.10",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpstan/phpstan": "^2.3",
         "phpstan/phpstan-deprecation-rules": "^2.0",
@@ -52,7 +52,7 @@
         "rector/rector": "^2.8",
         "roave/security-advisories": "dev-latest",
         "shipmonk/composer-dependency-analyser": "^1.8",
-        "vimeo/psalm": "^7.0"
+        "vimeo/psalm": "^7.3"
     },
     "autoload": {
         "psr-4": {
